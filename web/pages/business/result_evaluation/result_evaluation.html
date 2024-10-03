@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script>
+    const ResultEvaluationSpace = (function () {
+        class C_ResultEvaluation {
+            constructor(viewId) {
+                this.viewId = viewId
+            }
+            render() {
+                const _this = this
+                const getTpl = $('#resultEvaluationTemplate').html();
+                // 渲染并输出结果
+                layui.laytpl(getTpl).render({}, function(html){
+                    $('#'+_this.viewId).html(html)
+                });
+            }
+        }
+        
+        function getResultEvaluation(viewId) {
+            return new C_ResultEvaluation(viewId)
+        }
+        
+        return {
+            getResultEvaluation: getResultEvaluation
+        }
+    })()
+</script>
+<script id="resultEvaluationTemplate" type="text/html">
+    推理结果评测
+</script>

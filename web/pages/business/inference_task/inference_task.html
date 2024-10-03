@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<script>
+    const InferenceTaskSpace = (function () {
+        class C_InferenceTask {
+            constructor(viewId) {
+                this.viewId = viewId
+            }
+            render() {
+                const _this = this
+                const getTpl = $('#inferenceTaskTemplate').html();
+                // 渲染并输出结果
+                layui.laytpl(getTpl).render({}, function(html){
+                    $('#'+_this.viewId).html(html)
+                });
+            }
+        }
+        
+        function getInferenceTask(viewId) {
+            return new C_InferenceTask(viewId)
+        }
+        
+        return {
+            getInferenceTask: getInferenceTask
+        }
+    })()
+</script>
+
+<script id="inferenceTaskTemplate" type="text/html">
+    推理任务
+</script>

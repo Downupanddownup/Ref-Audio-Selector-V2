@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<script>
+    const ReferenceAudioSpace = (function () {
+        
+        class C_ReferenceAudio {
+            constructor(viewId) {
+                this.viewId = viewId
+            }
+
+            render() {
+                const _this = this
+                const getTpl = $('#referenceAudioTemplate').html(); // 获取模板字符
+                // 渲染并输出结果
+                layui.laytpl(getTpl).render({}, function(html){
+                    $('#'+_this.viewId).html(html)
+                });
+                return _this
+            }
+            
+        }
+        
+        function getReferenceAudio(viewId) {
+            return new C_ReferenceAudio(viewId)
+        }
+        
+        return {
+            getReferenceAudio: getReferenceAudio
+        }
+    })()
+</script>
+
+<script id="referenceAudioTemplate" type="text/html">
+    参考音频
+</script>
