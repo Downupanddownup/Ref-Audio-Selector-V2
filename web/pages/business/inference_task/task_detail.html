@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<script>
+  const TaskDetailSpace = (function () {
+    class C_TaskDetail {
+      constructor(viewId) {
+        this.viewId = viewId
+      }
+      render() {
+        const _this = this
+        const getTpl = $('#taskDetailTemplate').html();
+        // 渲染并输出结果
+        layui.laytpl(getTpl).render({}, function(html){
+          const obj = $('#'+_this.viewId)
+          obj.html(html)
+
+        });
+      }
+
+
+    }
+
+    function getTaskDetail(viewId) {
+      return new C_TaskDetail(viewId)
+    }
+
+    return {
+      getTaskDetail: getTaskDetail
+    }
+  })()
+</script>
+
+<script id="taskDetailTemplate" type="text/html">
+  <table style="width: 100%">
+    <tr>
+      <td>
+        GPT-Sovits 版本：
+      </td>
+      <td>
+        <select>
+          <option value="v1">v1</option>
+          <option value="v2">v2</option>
+        </select>
+      </td>
+      <td>
+        GPT 模型：
+      </td>
+      <td>
+        <select></select>
+        <button type="button" class="layui-btn layui-btn-xs">刷新</button>
+      </td>
+      <td>
+        Vits 模型：
+      </td>
+      <td>
+        <select></select>
+        <button type="button" class="layui-btn layui-btn-xs">刷新</button>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        参考音频：
+      </td>
+    </tr>
+  </table>
+  
+</script>

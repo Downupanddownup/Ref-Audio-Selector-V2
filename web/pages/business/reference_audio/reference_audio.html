@@ -12,11 +12,83 @@
                 const getTpl = $('#referenceAudioTemplate').html(); // 获取模板字符
                 // 渲染并输出结果
                 layui.laytpl(getTpl).render({}, function(html){
-                    $('#'+_this.viewId).html(html)
+                    const obj = $('#'+_this.viewId)
+                    obj.html(html)
+
+                    _this.listenTabSwitch()
+                    
+                    obj.find('#openReportResult').on('click', function(){
+                        _this.openReportResult()
+                    })
+                    
                 });
                 return _this
             }
+
+            openReportResult(){
+                layer.open({
+                    type: 1,
+                    area: ['90%', '90%'],
+                    content: `<div id="reportResultView"></div>`,
+                    btn: ['确定', '取消'],
+                    yes: function(){
+                        
+                    }
+                });
+
+                const C_ReportResult$1 = ReportResultSpace.getReportResult('reportResultView').render()
+            }
             
+            
+            listenTabSwitch(){
+                const _this = this
+                layui.element.on('tab(referenceAudioTabBrief)', function (data) {
+                    console.log($(this).html()); // 当前 tab 标题所在的原始 DOM 元素
+                    console.log(data.index); // 得到当前 tab 项的所在下标
+                    console.log(data.elem); // 得到当前的 tab 容器
+                    console.log(data.id); // 得到当前的 tab ID(2.9.11+)
+
+                    const html = $(this).html()
+                    if (html == '参考列表') {
+                        _this.loadReferenceList()
+                    } else if (html == '参考分类') {
+                        _this.startReferenceCategory()
+                    }
+
+                });
+            }
+
+            startReferenceCategory(){
+                const _this = this
+            }
+
+            loadReferenceList(){
+                const height = $('#referenceAudioList').parent().parent().height() - 50
+                // 创建渲染实例
+                layui.table.render({
+                    elem: '#referenceAudioList',
+                    url: '/static/json/2/table/demo1.json', // 此处为静态模拟数据，实际使用时需换成真实接口
+                    height: height, // 最大高度减去其他容器已占有的高度差
+                    cellMinWidth: 80,
+                    page: true,
+                    cols: [[
+                        {field:'index', width:'5%', title: '序号'},
+                        {field:'audioName', width:'20%', title: '音频名称'},
+                        {field:'audioCategory', width:'20%', title: '音频分类'},
+                        {field:'audioPlay', width:'20%', title: '音频播放'},
+                        {field:'audioContent', width:'20%', title: '音频内容'},
+                        {field:'audioLanguage', width:'20%', title: '音频语种'},
+                        {field:'audioLength', width:'20%', title: '音频时长'},
+                        {field:'opt', width:'20%', title: '操作'},
+                    ]],
+                    done: function(){
+                        
+                    },
+                    error: function(res, msg){
+                        console.log(res, msg)
+                    }
+                });
+            }
         }
         
         function getReferenceAudio(viewId) {
@@ -30,5 +102,71 @@
 </script>
 
 <script id="referenceAudioTemplate" type="text/html">
-    参考音频
+    
+    <div style="display: flex;justify-content: space-between;padding: 20px">
+        <div class="layui-form-item" style="flex-grow: 1;">
+            <label class="layui-form-label">输入list路径</label>
+            <div class="layui-input-block" style="display: flex">
+                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入list路径" class="layui-input" style="width: 100%;">
+            </div>
+        </div>
+        <button type="submit" class="layui-btn" >提取参考</button>
+    </div>
+
+    <div class="layui-tab layui-tab-card" style="margin: 0 5px" lay-filter="referenceAudioTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">参考列表</li>
+            <li>参考分类</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 550px;padding: 5px;">
+            <div class="layui-tab-item layui-show" style="height: 100%">
+                <table class="layui-hide" id="referenceAudioList" lay-filter="referenceAudioList" style="height: 100%"></table>
+            </div>
+            <div class="layui-tab-item">
+                <div style="display: flex;justify-content: space-between">
+                    <div>
+                        <label class="layui-form-label" style="width: auto">待比较的音频</label>
+                        <audio controls>
+                            <source src="path/to/audio.mp3" type="audio/mpeg">
+                            <source src="path/to/audio.ogg" type="audio/ogg">
+                            <!-- 提供备用内容，比如浏览器不支持<audio>标签时显示的信息 -->
+                            您的浏览器不支持 HTML5 audio 标签。
+                        </audio>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">比对目录</label>
+                        <div class="layui-input-inline">
+                            <select name="interest" lay-filter="aihao">
+                                <option value=""></option>
+                                <option value="0">写作</option>
+                                <option value="1" selected>阅读</option>
+                                <option value="2">游戏</option>
+                                <option value="3">音乐</option>
+                                <option value="4">旅行</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div style="display: flex;justify-content: space-between">
+                    <button type="submit" class="layui-btn" >开始比对</button>
+                    <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="比对结果" class="layui-input" style="width: auto;" disabled>
+                </div>
+                <div>
+                    <button type="submit" class="layui-btn" id="openReportResult">打开报告结果</button>
+                </div>
+                <div style="display: flex;justify-content: space-between">
+                    <input type="number" name="title" lay-verify="title" autocomplete="off" placeholder="请输入待分割值" class="layui-input" style="width: auto;">
+                    <button type="submit" class="layui-btn" >清空分割值</button>
+                    <input type="number" name="title" lay-verify="title" autocomplete="off" placeholder="请输入目标分类名称" class="layui-input" style="width: auto;">
+                </div>
+                <div style="display: flex;justify-content: space-between">
+                    <button type="submit" class="layui-btn" >将分割值及以上的音频转入目标分类</button>
+                    <input type="number" name="title" lay-verify="title" autocomplete="off" placeholder="处理结果" class="layui-input" style="width: auto;" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+   
 </script>

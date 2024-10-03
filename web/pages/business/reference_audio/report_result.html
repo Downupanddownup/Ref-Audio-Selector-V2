@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<script>
+    const ReportResultSpace = (function () {
+        class C_ReportResult {
+            constructor(viewId) {
+                this.viewId = viewId
+            }
+            render() {
+                const _this = this
+                const getTpl = $('#reportResultTemplate').html();
+                // 渲染并输出结果
+                layui.laytpl(getTpl).render({}, function(html){
+                    $('#'+_this.viewId).html(html)
+                });
+            }
+        }
+
+        function getReportResult(viewId) {
+            return new C_ReportResult(viewId)
+        }
+
+        return {
+            getReportResult: getReportResult
+        }
+    })()
+</script>
+
+<script id="reportResultTemplate" type="text/html">
+    <div>报告结果</div>
+</script>

@@ -48,8 +48,10 @@
       CommonSpace.loadHtmls([
               './business/audio_packaging/audio_packaging.html',
               './business/inference_task/inference_task.html',
+              './business/inference_task/task_detail.html',
               './business/long_text_inference/long_text_inference.html',
               './business/reference_audio/reference_audio.html',
+              './business/reference_audio/report_result.html',
               './business/result_evaluation/result_evaluation.html'
       ],function () {
         layui.element.on('tab(docDemoTabBrief)', function (data) {
@@ -57,14 +59,24 @@
           console.log(data.index); // 得到当前 tab 项的所在下标
           console.log(data.elem); // 得到当前的 tab 容器
           console.log(data.id); // 得到当前的 tab ID(2.9.11+)
-
-          const C_ReferenceAudio$1 = ReferenceAudioSpace.getReferenceAudio('referenceAudioView').render()
-          const C_InferenceTask$1 = InferenceTaskSpace.getInferenceTask('inferenceTaskView').render()
-          const C_ResultEvaluation$1 = ResultEvaluationSpace.getResultEvaluation('resultEvaluationView').render()
-          const C_LongTextInference$1 = LongTextInferenceSpace.getLongTextInference('longTextInferenceView').render()
-          const C_AudioPackaging$1 = AudioPackagingSpace.getAudioPackaging('audioPackagingView').render()
+          
+          const html = $(this).html()
+          if (html == '参考音频') {
+            const C_ReferenceAudio$1 = ReferenceAudioSpace.getReferenceAudio('referenceAudioView').render()
+          } else if (html == '推理任务') {
+            const C_InferenceTask$1 = InferenceTaskSpace.getInferenceTask('inferenceTaskView').render()
+          } else if (html == '结果评测') {
+            const C_ResultEvaluation$1 = ResultEvaluationSpace.getResultEvaluation('resultEvaluationView').render()
+          } else if (html == '长文推理') {
+            const C_LongTextInference$1 = LongTextInferenceSpace.getLongTextInference('longTextInferenceView').render()
+          } else if (html == '音频打包') {
+            const C_AudioPackaging$1 = AudioPackagingSpace.getAudioPackaging('audioPackagingView').render()
+          }
           
         });
+
+        const C_ReferenceAudio$1 = ReferenceAudioSpace.getReferenceAudio('referenceAudioView').render()
+        
       })
 
       
