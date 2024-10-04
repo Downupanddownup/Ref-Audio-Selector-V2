@@ -32,6 +32,29 @@
 <script id="taskDetailTemplate" type="text/html">
   <table style="width: 100%">
     <tr>
+      <td>比较变量类型：</td>
+      <td>
+        <select>
+          <option>请选择</option>
+          <option>参考音频</option>
+          <option>GPT模型</option>
+          <option>Vits模型</option>
+          <option>top_k值</option>
+          <option>top_p值</option>
+          <option>temperature值</option>
+          <option>speed值</option>
+          <option>文本分隔符</option>
+          <option>其余参数</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+  </table>
+  <hr class="layui-border-black">
+  <table style="width: 100%">
+    <tr>
       <td>
         GPT-Sovits 版本：
       </td>
@@ -58,7 +81,52 @@
     </tr>
     <tr>
       <td>
-        参考音频：
+        top_k值：
+      </td>
+      <td>
+        <input type="number" autocomplete="off" placeholder="top_k值" class="layui-input" style="width: auto;">
+      </td>
+      <td>
+        top_p值：
+      </td>
+      <td>
+        <input type="number" autocomplete="off" placeholder="top_p值" class="layui-input" style="width: auto;">
+      </td>
+      <td>
+        temperature值：
+      </td>
+      <td>
+        <input type="number" autocomplete="off" placeholder="temperature值" class="layui-input" style="width: auto;">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        文本分隔符：
+      </td>
+      <td>
+        <input type="text" autocomplete="off" placeholder="文本分隔符" class="layui-input" style="width: auto;">
+      </td>
+      <td>
+        speed值：
+      </td>
+      <td>
+        <input type="number" autocomplete="off" placeholder="speed值" class="layui-input" style="width: auto;">
+      </td>
+      <td>
+        其余参数：
+      </td>
+      <td>
+        <input type="text" autocomplete="off" placeholder="其余参数" class="layui-input" style="width: auto;">
+      </td>
+    </tr>
+    <tr>
+      <td>参考音频：</td>
+      <td>
+        15条
+      </td>
+      <td>推理文本：</td>
+      <td>
+        30份
       </td>
     </tr>
   </table>
