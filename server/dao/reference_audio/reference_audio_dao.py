@@ -6,15 +6,34 @@ from server.dao.data_base_manager import DatabaseConnection, SQLExecutor
 
 class ReferenceAudioDao:
     @staticmethod
-    def find_list(filter:ObjReferenceAudioFilter) -> list[ObjReferenceAudio]:
+    def find_count(filter: ObjReferenceAudioFilter) -> int:
         # 查询所有记录的SQL语句
         select_sql = '''
-            SELECT * FROM tab_obj_reference_audio where 1=1 ;
+            SELECT COUNT(1) FROM tab_obj_reference_audio where 1=1
             '''
 
         condition_sql, condition = filter.make_sql()
-        
+
         select_sql += condition_sql
+
+        count = SQLExecutor.get_count(select_sql, condition)
+
+        return count
+
+    @staticmethod
+    def find_list(filter: ObjReferenceAudioFilter) -> list[ObjReferenceAudio]:
+        # 查询所有记录的SQL语句
+        select_sql = '''
+            SELECT * FROM tab_obj_reference_audio where 1=1
+            '''
+
+        condition_sql, condition = filter.make_sql()
+
+        select_sql += condition_sql
+
+        select_sql += filter.get_order_by_sql()
+
+        select_sql += filter.get_limit_sql()
 
         records = SQLExecutor.execute_query(select_sql, condition)
 
@@ -37,7 +56,7 @@ class ReferenceAudioDao:
         sql = '''
         INSERT INTO tab_obj_reference_audio(AudioName,AudioPath,Content,Language,Category,AudioLength,ValidOrNot,CreateTime) VALUES (?,?,?,?,?,?,?,datetime('now'))
         '''
-        return SQLExecutor.batch_execute(sql,[ (
+        return SQLExecutor.batch_execute(sql, [(
             x.audio_name,
             x.audio_path,
             x.content,

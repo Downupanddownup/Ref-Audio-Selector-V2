@@ -28,6 +28,7 @@ async def get_reference_audio_list(request: Request):
     form_data = await request.form()
     audio_filter = ObjReferenceAudioFilter(form_data)
 
+    count = ReferenceAudioService.find_count(audio_filter)
     audio_list = ReferenceAudioService.find_list(audio_filter)
 
-    return ResponseResult(data=audio_list)
+    return ResponseResult(data=audio_list, count=count)

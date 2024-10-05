@@ -21,29 +21,28 @@ class ObjReferenceAudio(BaseModel):
                 f"AudioPath: {self.audio_path}, Content: {self.content}, "
                 f"Language: {self.language}, Category: {self.category}, ValidOrNot: {self.valid_or_not},"
                 f"AudioLength: {self.audio_length}, CreateTime: {self.create_time}")
-    
-    
+
+
 class ObjReferenceAudioFilter(Filter):
-    def __init__(self,form_data):
+    def __init__(self, form_data):
         super().__init__(form_data)
         self.audio_name = form_data.get('audio_name')
         self.content = form_data.get('content')
         self.category = form_data.get('category')
-        
-    
+
     def make_sql(self) -> []:
         sql = ''
         condition = []
         if not ValidationUtils.is_empty(self.audio_name):
             sql += f" and audio_name like ? "
             condition.append(f"%{self.audio_name}%")
-        
+
         if not ValidationUtils.is_empty(self.content):
             sql += f" and content like ? "
             condition.append(f"%{self.content}%")
-        
+
         if not ValidationUtils.is_empty(self.category):
             sql += f" and category = ? "
             condition.append(f"{self.category}")
-        
+
         return sql, tuple(condition)

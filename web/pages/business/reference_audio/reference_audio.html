@@ -103,9 +103,12 @@
                     height: height, // 最大高度减去其他容器已占有的高度差
                     // cellMinWidth: 80,
                     page: true,
+                    limit:50,
+                    limits:[50,100,150,200],
+                    autoSort:false,
                     initSort: {
-                        field: 'audioLength', // 按 id 字段排序
-                        type: 'desc' // 降序排序
+                        order: 'audioLength', // 按 id 字段排序
+                        desc: 'desc' // 降序排序
                     },
                     // lineStyle: 'height: 50px;', // 定义表格的多行样式
                     parseData: function(res){ //res 即为原始返回的数据
@@ -139,7 +142,7 @@
                         {field:'language', width:'8%', title: '音频语种', templet: function(d, k){
                                 return d.language;
                             }},
-                        {field:'audioLength', width:'8%', title: '音频时长', sortable: true, templet: function(d, k){
+                        {field:'audioLength', width:'8%', title: '音频时长', sort: true, templet: function(d, k){
                                 return d.audioLength;
                             }},
                         {field:'opt', width:'20%', title: '操作', templet: function(d, k){
@@ -155,6 +158,28 @@
                     error: function(res, msg){
                         console.log(res, msg)
                     }
+                });
+
+                const PageParam = {
+                    order:'',
+                    desc:''
+                }
+
+                //排序
+                layui.table.on('sort(referenceAudioList)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+
+                    PageParam.order = obj.field;  //当前排序的字段名
+                    PageParam.desc = obj.type;   //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
+
+                    // var params = getSearchParams()
+
+                    // loadLayuiList(params);
+
+                    layui.table.reload('referenceAudioList', {
+                        initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                        ,where: PageParam
+                    });
+
                 });
             }
         }

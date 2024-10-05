@@ -2,6 +2,7 @@ import subprocess
 import sys
 import os
 
+
 class ValidationUtils:
     @staticmethod
     def is_empty(value):
@@ -14,11 +15,12 @@ class ValidationUtils:
         return False
 
 
-def clean_path(path_str:str):
-    if path_str.endswith(('\\','/')):
+def clean_path(path_str: str):
+    if path_str.endswith(('\\', '/')):
         return clean_path(path_str[0:-1])
     path_str = path_str.replace('/', os.sep).replace('\\', os.sep)
     return path_str.strip(" ").strip('\'').strip("\n").strip('"').strip(" ").strip("\u202a")
+
 
 def batch_clean_paths(paths):
     """
@@ -100,3 +102,32 @@ def open_file(filepath):
     elif os.name == 'posix':  # For Linux, Unix, etc.
         subprocess.run(['xdg-open', filepath])
 
+
+def str_to_int(input_str, default=None):
+    """
+    将字符串转换为整数。
+
+    参数:
+    input_str (str): 需要转换的字符串。
+    default (int, optional): 如果转换失败时返回的默认值，默认为None。
+
+    返回:
+    int: 转换后的整数或默认值。
+    """
+    try:
+        # 尝试直接转换为整数
+        return int(input_str)
+    except ValueError:
+        try:
+            # 如果是浮点数，尝试转换并四舍五入
+            if '.' in input_str:
+                return round(float(input_str))
+        except ValueError:
+            # 如果转换失败，则根据是否有默认值决定行为
+            if default is not None:
+                return default
+            else:
+                raise ValueError(f"Cannot convert '{input_str}' to an integer.")
+    except TypeError:
+        # 如果输入不是字符串类型，则抛出错误
+        raise TypeError("Input must be a string.")
