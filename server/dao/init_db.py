@@ -1,9 +1,9 @@
 import sqlite3
 
 
-def create_table():
+def init_table(db_path):
     # 连接到SQLite数据库，如果不存在则创建
-    conn = sqlite3.connect(r'E:\GPT-SoVITS\Ref-Audio-Selector-V2\example.db')
+    conn = sqlite3.connect(db_path)
 
     # 创建一个游标对象用于执行SQL命令
     cursor = conn.cursor()

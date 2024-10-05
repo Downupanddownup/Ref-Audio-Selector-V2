@@ -26,5 +26,4 @@ async def get_reference_audio_list(request: Request):
 
     list = ReferenceAudioService.search()
 
-    result = ResponseResult(code=0, data=list, msg="success")
-    return result
+    return ResponseResult(code=0, data=list, msg="success")

@@ -1,6 +1,8 @@
 import sqlite3
 from typing import List, Dict
 
+from server.dao.init_db import init_table
+
 
 class SingletonMeta(type):
     _instances = {}
@@ -16,8 +18,9 @@ class DatabaseConfig(metaclass=SingletonMeta):
     def __init__(self):
         self.db_path = ''
 
-    def update_db_path(self, new_path):
-        self.db_path = new_path
+    def update_db_path(self, workspace: str, role_name: str):
+        self.db_path = f'{workspace}\\{role_name}\\ref_audio_selector.db'
+        init_table(self.db_path)
 
 
 # 读取配置文件
