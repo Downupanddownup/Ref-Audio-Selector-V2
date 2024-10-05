@@ -69,7 +69,8 @@
                 // 创建渲染实例
                 layui.table.render({
                     elem: '#referenceAudioList',
-                    url: './json/reference_audio.json', // 此处为静态模拟数据，实际使用时需换成真实接口
+                    url: BaseUrl+'audio/get_reference_audio_list', // 此处为静态模拟数据，实际使用时需换成真实接口
+                    method: 'post',
                     height: height, // 最大高度减去其他容器已占有的高度差
                     // cellMinWidth: 80,
                     page: true,
