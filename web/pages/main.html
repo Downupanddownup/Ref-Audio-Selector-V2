@@ -16,13 +16,13 @@
       <table class="table1">
         <tr>
           <td class="vertical-center">
-            工作目录：<input type="text" autocomplete="off" placeholder="工作目录" class="layui-input" style="width: auto;display: inline;flex-grow: 1">
+            工作目录：<input type="text" id="workspace" autocomplete="off" placeholder="工作目录" class="layui-input" style="width: auto;display: inline;flex-grow: 1">
           </td>
           <td>
-            角色名称：<input type="text" autocomplete="off" placeholder="角色名称" class="layui-input" style="width: auto;display: inline">
+            角色名称：<input type="text" id="roleName" autocomplete="off" placeholder="角色名称" class="layui-input" style="width: auto;display: inline">
           </td>
           <td>
-            <button type="submit" class="layui-btn">切换并刷新</button>
+            <button type="submit" class="layui-btn" onclick="switchAndRefreshWorkspace()">切换并刷新</button>
           </td>
         </tr>
       </table>
@@ -98,7 +98,33 @@
     });
   }
   
- 
+  function switchAndRefreshWorkspace() {
+    
+    const workspace = $('#workspace').val()
+    const roleName = $('#roleName').val()
+    if (workspace == '' || roleName == '') {
+      layer.msg('请输入完整信息')
+      return
+    }
+    
+    $.ajax({
+      url: BaseUrl + 'common/switch_role_workspace',
+      type: 'POST',
+      data: {
+        workspace: workspace,
+        roleName: roleName
+      },
+      success: function (data) {
+        if (data.code == 0) {
+          layer.msg('切换成功')
+        } else {
+          layer.msg(data.msg)
+        }
+      }
+    })
+    
+  }
+  
 </script>
 </body>
 </html>

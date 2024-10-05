@@ -18,6 +18,7 @@ def init_table(db_path):
         Language TEXT COMMENT '音频语种',
         Category TEXT COMMENT '音频分类',
         AudioLength INTEGER COMMENT '音频时长',
+        ValidOrNot INTEGER COMMENT '是否有效 1 有效 0 无效' DEFAULT 1,
         CreateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- SQLite中默认值可以直接设置
     );
     ''')

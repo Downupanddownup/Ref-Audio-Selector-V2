@@ -20,11 +20,40 @@
                     obj.find('#openReportResult').on('click', function(){
                         _this.openReportResult()
                     })
+                    
+                    obj.find('#extractReferenceFile').on('click', function(){
+                        _this.extractReferenceFile()
+                    })
 
                     _this.loadReferenceList()
                     
                 });
                 return _this
+            }
+
+            extractReferenceFile(){
+                const _this = this
+                const listFile = $('#'+_this.viewId + ' #listFile').val()
+                if (!listFile) {
+                    layer.msg('请先选择音频列表文件')
+                    return
+                }
+                $.ajax({
+                    url: BaseUrl+'audio/load_audio_list_file',
+                    type: 'post',
+                    data: {
+                        audioListFile: listFile
+                    },
+                    success: function(res){
+                        layer.msg(res.msg)
+                        if (msg.code == 0) {
+                            _this.loadReferenceList()
+                        }
+                    },
+                    error: function(res, msg){
+                        layer.msg(msg)
+                    }
+                })
             }
 
             openReportResult(){
@@ -74,6 +103,10 @@
                     height: height, // 最大高度减去其他容器已占有的高度差
                     // cellMinWidth: 80,
                     page: true,
+                    initSort: {
+                        field: 'audioLength', // 按 id 字段排序
+                        type: 'desc' // 降序排序
+                    },
                     // lineStyle: 'height: 50px;', // 定义表格的多行样式
                     parseData: function(res){ //res 即为原始返回的数据
                         const list = res.data ? res.data.map(i => new C_ObjReferenceAudio(i)) : []
@@ -106,7 +139,7 @@
                         {field:'language', width:'8%', title: '音频语种', templet: function(d, k){
                                 return d.language;
                             }},
-                        {field:'audioLength', width:'8%', title: '音频时长', templet: function(d, k){
+                        {field:'audioLength', width:'8%', title: '音频时长', sortable: true, templet: function(d, k){
                                 return d.audioLength;
                             }},
                         {field:'opt', width:'20%', title: '操作', templet: function(d, k){
@@ -142,10 +175,10 @@
         <div class="layui-form-item" style="flex-grow: 1;margin-right: 20px">
             <label class="layui-form-label">输入list路径</label>
             <div class="layui-input-block" style="display: flex">
-                <input type="text" autocomplete="off" placeholder="请输入list路径" class="layui-input" style="width: 100%;">
+                <input type="text" id="listFile" autocomplete="off" placeholder="请输入list路径" class="layui-input" style="width: 100%;">
             </div>
         </div>
-        <button type="submit" class="layui-btn" >提取参考</button>
+        <button type="submit" class="layui-btn" id="extractReferenceFile">提取参考</button>
     </div>
 
     <div class="layui-tab layui-tab-card" style="margin: 0 5px" lay-filter="referenceAudioTabBrief">

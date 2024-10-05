@@ -13,7 +13,7 @@ def convert_list_to_camel_case_dicts(list):
 
 
 class ResponseResult:
-    def __init__(self, code=0, msg="", count=0, data=None):
+    def __init__(self, code=0, msg="success", count=0, data=None):
         self.code = code
         self.msg = msg
         self.count = count

@@ -7,7 +7,7 @@ from server.util.util import ValidationUtils
 router = APIRouter(prefix="/common")
 
 
-@router.get("/switch_role_workspace")
+@router.post("/switch_role_workspace")
 async def switch_role_workspace(request: Request):
     form_data = await request.form()
     workspace = form_data.get("workspace")
