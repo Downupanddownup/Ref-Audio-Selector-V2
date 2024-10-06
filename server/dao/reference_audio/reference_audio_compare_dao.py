@@ -25,10 +25,10 @@ class ReferenceAudioCompareDao:
 
         records = SQLExecutor.execute_query(select_sql, (task_id,))
 
-        list = []
+        task_list = []
 
         for data in records:
-            list.append(ObjReferenceAudioCompareTask(
+            task_list.append(ObjReferenceAudioCompareTask(
                 id=data.get('Id'),
                 audio_id=data.get('AudioId'),
                 category_name=data.get('CategoryName'),
@@ -36,9 +36,9 @@ class ReferenceAudioCompareDao:
                 remark=data.get('Remark'),
                 create_time=data.get('CreateTime')
             ))
-        if len(list) == 0:
+        if len(task_list) == 0:
             return None
-        return list[0]
+        return task_list[0]
 
     @staticmethod
     def update_task_status(task_id: int, status: int) -> int:
@@ -46,8 +46,8 @@ class ReferenceAudioCompareDao:
             UPDATE tab_obj_reference_audio_compare_task SET Status = ? WHERE Id = ?
             '''
         return SQLExecutor.execute_update(sql, (
-            task_id,
-            status
+            status,
+            task_id
         ))
 
     @staticmethod
@@ -60,4 +60,49 @@ class ReferenceAudioCompareDao:
             x.compare_audio_id,
             x.score
         ) for x in detail_list])
+
+    @staticmethod
+    def get_last_finish_task_by_audio_id(audio_id: int) -> ObjReferenceAudioCompareTask:
+        # 查询所有记录的SQL语句
+        select_sql = '''
+            SELECT * FROM tab_obj_reference_audio_compare_task where AudioId = ? AND Status = 2 ORDER BY Id DESC LIMIT 1
+            '''
+
+        records = SQLExecutor.execute_query(select_sql, (audio_id,))
+
+        task_list = []
+
+        for data in records:
+            task_list.append(ObjReferenceAudioCompareTask(
+                id=data.get('Id'),
+                audio_id=data.get('AudioId'),
+                category_name=data.get('CategoryName'),
+                status=data.get('Status'),
+                remark=data.get('Remark'),
+                create_time=data.get('CreateTime')
+            ))
+        if len(task_list) == 0:
+            return None
+        return task_list[0]
+
+    @staticmethod
+    def get_compare_detail_list_by_task_id(task_id: int) -> list[ObjReferenceAudioCompareDetail]:
+        # 查询所有记录的SQL语句
+        select_sql = '''
+            SELECT * FROM tab_obj_reference_audio_compare_detail where TaskId = ? ORDER BY Score DESC
+            '''
+
+        records = SQLExecutor.execute_query(select_sql, (task_id,))
+
+        task_list = []
+
+        for data in records:
+            task_list.append(ObjReferenceAudioCompareDetail(
+                id=data.get('Id'),
+                task_id=data.get('TaskId'),
+                compare_audio_id=data.get('CompareAudioId'),
+                score=data.get('Score'),
+                create_time=data.get('CreateTime')
+            ))
+        return task_list
 

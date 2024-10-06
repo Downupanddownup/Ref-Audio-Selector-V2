@@ -10,6 +10,38 @@
     padding: 20px; /* 内边距 */
 }
 
+.table2 {
+    width: 100%;
+    margin: 1px;
+    padding: 1px;
+    border-collapse: collapse; /* 合并边框 */
+}
+.table2 td, .table2 th {
+    text-align: center;
+    border: 1px solid #e0e0e0; /* 更浅的灰色边框 */
+    padding: 10px 10px; /* 内边距 */
+}
+
+.table2 tr:nth-child(even) {
+    background-color: #f2f2f2; /* 浅灰色 */
+}
+
+.table2 tr:nth-child(odd) {
+    background-color: #ffffff; /* 白色 */
+}
+
+
+/* 悬停时改变背景颜色 */
+.table2 tr:hover {
+    background-color: #e0e0e0; /* 更深的灰色 */
+}
+
+/* 选中时改变背景颜色 */
+.table2 .selected {
+    background-color: lightblue !important; /* 指定鼠标悬停时的背景色 */
+}
+
+
 /* 基本样式 */
 .customSelect {
     appearance: none; /* 移除默认样式 */
@@ -51,4 +83,11 @@
 
 .custom-audio{
     height: 30px;
+}
+
+/* 简化后的单行文本溢出样式 */
+.single-line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

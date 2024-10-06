@@ -56,7 +56,7 @@
                     layui.layer.alert('请先选择比对目录')
                     return
                 }
-                $.ajax({
+                $.customAjax({
                     url: BaseUrl+'audio/start_compare_audio',
                     type: 'post',
                     data: {
@@ -82,7 +82,7 @@
                     layer.msg('请先选择音频列表文件')
                     return
                 }
-                $.ajax({
+                $.customAjax({
                     url: BaseUrl+'audio/load_audio_list_file',
                     type: 'post',
                     data: {
@@ -101,6 +101,7 @@
             }
 
             openReportResult(){
+                const _this = this
                 layer.open({
                     type: 1,
                     area: ['90%', '90%'],
@@ -111,7 +112,7 @@
                     }
                 });
 
-                const C_ReportResult$1 = ReportResultSpace.getReportResult('reportResultView').render()
+                const C_ReportResult$1 = ReportResultSpace.getReportResult('reportResultView', _this.compareAudio.id)
             }
             
             

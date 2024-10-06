@@ -1,4 +1,7 @@
-class ObjReferenceAudioCompareTask:
+from server.bean.base_model import BaseModel
+
+
+class ObjReferenceAudioCompareTask(BaseModel):
     def __init__(self, id=None, audio_id=None, category_name=None, status=0, remark='', create_time=None):
         self.id = id  # 自增编号
         self.audio_id = audio_id  # 音频id

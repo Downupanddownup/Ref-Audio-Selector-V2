@@ -8,4 +8,11 @@ class BaseModel:
 
     def to_camel_case_dict(self):
         """Converts the instance attributes to a dictionary with camelCase keys."""
-        return {self.snake_to_camel(k): v for k, v in vars(self).items()}
+        return {self.snake_to_camel(k): to_camel_case_dict_if_is_base_model(v) for k, v in self.__dict__.items()}
+
+
+def to_camel_case_dict_if_is_base_model(item):
+    if isinstance(item, BaseModel) and hasattr(item, 'to_camel_case_dict'):
+        return item.to_camel_case_dict()
+    else:
+        return item
