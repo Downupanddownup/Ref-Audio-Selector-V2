@@ -34,11 +34,45 @@
                     obj.find('#extractReferenceFile').on('click', function(){
                         _this.extractReferenceFile()
                     })
+                    
+                    obj.find('#startCompareAudio').on('click', function(){
+                        _this.startCompareAudio()
+                    })
 
                     layui.element.tabChange('referenceAudioTabBrief', tab_type ? tab_type : '1');
                     
                 });
                 return _this
+            }
+
+            startCompareAudio(){
+                const _this = this
+                if (_this.compareAudio == null) {
+                    layui.layer.alert('请先选择音频文件')
+                    return
+                }
+                const compareCategory = $('#' + _this.viewId + ' #compareCategory').val()
+                if (!compareCategory) {
+                    layui.layer.alert('请先选择比对目录')
+                    return
+                }
+                $.ajax({
+                    url: BaseUrl+'audio/start_compare_audio',
+                    type: 'post',
+                    data: {
+                        audioId: _this.compareAudio.id,
+                        categoryName:compareCategory
+                    },
+                    success: function(res){
+                        layer.msg(res.msg)
+                        if (res.code == 0) {
+                            _this.loadReferenceList()
+                        }
+                    },
+                    error: function(res, msg){
+                        layer.msg(msg)
+                    }
+                })
             }
 
             extractReferenceFile(){
@@ -263,14 +297,14 @@
                         </td>
                         <td>
                             比对目录：
-                            <select class="customSelect">
+                            <select class="customSelect" id="compareCategory">
                                 {{# layui.each(d.categoryList, function(index,item){ }}
                                     <option value="{{item.name}}">{{item.name}}</option>
                                 {{# }) }}
                             </select>
                         </td>
                         <td>
-                            <button type="submit" class="layui-btn" >开始比对</button>
+                            <button type="submit" class="layui-btn" id="startCompareAudio">开始比对</button>
                         </td>
                     </tr>
                     <tr>

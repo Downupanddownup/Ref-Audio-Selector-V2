@@ -91,6 +91,15 @@ class ReferenceAudioService:
     def insert_reference_audio_list(audio_list: list[ObjReferenceAudio]) -> int:
         return ReferenceAudioDao.batch_insert_reference_audio(audio_list)
 
+    @staticmethod
+    def get_audio_by_id(audio_id: int) -> ObjReferenceAudio:
+        audio_list = ReferenceAudioDao.find_list(ObjReferenceAudioFilter({
+            'id': audio_id
+        }))
+        if len(audio_list) > 0:
+            return audio_list[0]
+        return None
+
 
 def check_audio_duration(duration, min_duration=3, max_duration=10):
     # 判断时长是否在3s至10s之间

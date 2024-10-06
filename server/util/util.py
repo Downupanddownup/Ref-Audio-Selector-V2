@@ -124,10 +124,7 @@ def str_to_int(input_str, default=None):
                 return round(float(input_str))
         except ValueError:
             # 如果转换失败，则根据是否有默认值决定行为
-            if default is not None:
-                return default
-            else:
-                raise ValueError(f"Cannot convert '{input_str}' to an integer.")
+            return default
     except TypeError:
         # 如果输入不是字符串类型，则抛出错误
-        raise TypeError("Input must be a string.")
+        return default

@@ -21,19 +21,19 @@ class ReferenceAudioDao:
         return count
 
     @staticmethod
-    def find_list(filter: ObjReferenceAudioFilter) -> list[ObjReferenceAudio]:
+    def find_list(audio_filter: ObjReferenceAudioFilter) -> list[ObjReferenceAudio]:
         # 查询所有记录的SQL语句
         select_sql = '''
             SELECT * FROM tab_obj_reference_audio where 1=1
             '''
 
-        condition_sql, condition = filter.make_sql()
+        condition_sql, condition = audio_filter.make_sql()
 
         select_sql += condition_sql
 
-        select_sql += filter.get_order_by_sql()
+        select_sql += audio_filter.get_order_by_sql()
 
-        select_sql += filter.get_limit_sql()
+        select_sql += audio_filter.get_limit_sql()
 
         records = SQLExecutor.execute_query(select_sql, condition)
 

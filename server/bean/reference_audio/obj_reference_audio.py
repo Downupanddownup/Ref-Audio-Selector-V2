@@ -26,6 +26,7 @@ class ObjReferenceAudio(BaseModel):
 class ObjReferenceAudioFilter(Filter):
     def __init__(self, form_data):
         super().__init__(form_data)
+        self.id = form_data.get('id')
         self.audio_name = form_data.get('audio_name')
         self.content = form_data.get('content')
         self.category = form_data.get('category')
@@ -33,6 +34,9 @@ class ObjReferenceAudioFilter(Filter):
     def make_sql(self) -> []:
         sql = ''
         condition = []
+        if not ValidationUtils.is_empty(self.id):
+            sql += f" and id = ? "
+            condition.append(f"{self.id}")
         if not ValidationUtils.is_empty(self.audio_name):
             sql += f" and audio_name like ? "
             condition.append(f"%{self.audio_name}%")
