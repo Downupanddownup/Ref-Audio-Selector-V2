@@ -10,6 +10,15 @@ def init_table(db_path):
 
     # 创建一个新表
     cursor.execute('''
+    CREATE TABLE tab_obj_inference_category (
+        Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, -- 自增编号
+        Name TEXT, -- 分类名称
+        CreateTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP -- 创建时间
+    );
+    ''')
+
+    # 创建一个新表
+    cursor.execute('''
     CREATE TABLE IF NOT EXISTS tab_obj_reference_audio (
         Id INTEGER PRIMARY KEY AUTOINCREMENT, -- SQLite使用AUTOINCREMENT关键字实现自动增长
         AudioName TEXT COMMENT '音频名称', -- SQLite不支持直接在列定义中添加注释

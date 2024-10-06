@@ -10,7 +10,7 @@ class ParamReadWriteManager:
 
 class ConfigManager:
     def __init__(self):
-        self.config_path = 'config.ini'
+        self.config_path = 'server/config.ini'
         self.config = configparser.ConfigParser()
         self.config.read(self.config_path, encoding='utf-8')
 

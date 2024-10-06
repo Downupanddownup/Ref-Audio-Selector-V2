@@ -17,12 +17,11 @@ class SingletonMeta(type):
 
 class DatabaseConfig(metaclass=SingletonMeta):
     def __init__(self):
-        self.workspace = ''
+        self.workspace = 'workspace'
         self.role_name = ''
         self.db_path = ''
 
-    def update_db_path(self, workspace: str, role_name: str):
-        self.workspace = workspace
+    def update_db_path(self, role_name: str):
         self.role_name = role_name
         self.db_path = f'{self.get_work_dir()}\\ref_audio_selector.db'
         init_table(self.db_path)

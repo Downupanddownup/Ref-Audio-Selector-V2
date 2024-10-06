@@ -83,3 +83,11 @@ class C_ObjInferenceTaskResultAudio {//推理任务的推理结果音频
         this.createTime = data.createTime ? new Date(data.createTime) : new Date(); // 创建时间, 默认为当前时间
     }
 }
+
+class C_ObjInferenceCategory {//参考分类
+    constructor(data) {
+        this.id = data.id ? data.id : 0; // 自增编号
+        this.name = data.name || ''; // 分类名称
+        this.createTime = data.createTime ? new Date(data.createTime) : new Date(); // 创建时间, 默认为当前时间
+    }
+}

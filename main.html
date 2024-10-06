@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>测试 - Layui</title>
-  <link rel="stylesheet" href="../layui/css/layui.css">
-  <link rel="stylesheet" href="./style/commonStyle.css">
+  <link rel="stylesheet" href="web/layui/css/layui.css">
+  <link rel="stylesheet" href="web/pages/style/commonStyle.css">
 </head>
 <body>
 
@@ -15,9 +15,6 @@
     <div class="layui-colla-content layui-show">
       <table class="table1">
         <tr>
-          <td class="vertical-center">
-            工作目录：<input type="text" id="workspace" autocomplete="off" placeholder="工作目录" class="layui-input" style="width: auto;display: inline;flex-grow: 1" value="E:\GPT-SoVITS\Ref-Audio-Selector-V2\test">
-          </td>
           <td>
             角色名称：<input type="text" id="roleName" autocomplete="off" placeholder="角色名称" class="layui-input" style="width: auto;display: inline" value="七七">
           </td>
@@ -48,10 +45,11 @@
 </div>
 
 <!-- body 末尾处引入 layui -->
-<script src="../layui/layui.js"></script>
-<script src="../jquery/jquery-3.7.1.min.js"></script>
-<script src="./common/common_jquery.js"></script>
-<script src="./bean/commonBean.js"></script>
+<script src="web/layui/layui.js"></script>
+<script src="web/jquery/jquery-3.7.1.min.js"></script>
+<script src="web/pages/common/common_jquery.js"></script>
+<script src="web/pages/bean/common_bean.js"></script>
+<script src="web/pages/common/util.js"></script>
 <script>
   
   const BaseUrl = 'http://localhost:8000/'
@@ -61,13 +59,13 @@
       
       CommonSpace.customJquery($)
       CommonSpace.loadHtmls([
-              './business/audio_packaging/audio_packaging.html',
-              './business/inference_task/inference_task.html',
-              './business/inference_task/task_detail.html',
-              './business/long_text_inference/long_text_inference.html',
-              './business/reference_audio/reference_audio.html',
-              './business/reference_audio/report_result.html',
-              './business/result_evaluation/result_evaluation.html'
+              'web/pages/business/audio_packaging/audio_packaging.html',
+              'web/pages/business/inference_task/inference_task.html',
+              'web/pages/business/inference_task/task_detail.html',
+              'web/pages/business/long_text_inference/long_text_inference.html',
+              'web/pages/business/reference_audio/reference_audio.html',
+              'web/pages/business/reference_audio/report_result.html',
+              'web/pages/business/result_evaluation/result_evaluation.html'
       ],function () {
         layui.element.on('tab(docDemoTabBrief)', function (data) {
           console.log($(this).html()); // 当前 tab 标题所在的原始 DOM 元素
@@ -100,9 +98,8 @@
   
   function switchAndRefreshWorkspace() {
     
-    const workspace = $('#workspace').val()
     const roleName = $('#roleName').val()
-    if (workspace == '' || roleName == '') {
+    if (roleName == '') {
       layer.msg('请输入完整信息')
       return
     }
@@ -111,7 +108,6 @@
       url: BaseUrl + 'common/switch_role_workspace',
       type: 'POST',
       data: {
-        workspace: workspace,
         roleName: roleName
       },
       success: function (data) {

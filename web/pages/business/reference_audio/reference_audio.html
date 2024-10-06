@@ -5,13 +5,23 @@
         class C_ReferenceAudio {
             constructor(viewId) {
                 this.viewId = viewId
+                this.audioList = []
+                this.compareAudio = null
+                this.categoryList = [
+                    new C_ObjInferenceCategory({
+                        name:'default'
+                    }),
+                    new C_ObjInferenceCategory({
+                        name:'无效'
+                    })
+                ]
             }
 
-            render() {
+            render(tab_type) {
                 const _this = this
                 const getTpl = $('#referenceAudioTemplate').html(); // 获取模板字符
                 // 渲染并输出结果
-                layui.laytpl(getTpl).render({}, function(html){
+                layui.laytpl(getTpl).render(_this, function(html){
                     const obj = $('#'+_this.viewId)
                     obj.html(html)
 
@@ -25,7 +35,7 @@
                         _this.extractReferenceFile()
                     })
 
-                    _this.loadReferenceList()
+                    layui.element.tabChange('referenceAudioTabBrief', tab_type ? tab_type : '1');
                     
                 });
                 return _this
@@ -46,7 +56,7 @@
                     },
                     success: function(res){
                         layer.msg(res.msg)
-                        if (msg.code == 0) {
+                        if (res.code == 0) {
                             _this.loadReferenceList()
                         }
                     },
@@ -94,6 +104,7 @@
             }
 
             loadReferenceList(){
+                const _this = this
                 const height = $('#referenceAudioList').parent().parent().height() - 50
                 // 创建渲染实例
                 layui.table.render({
@@ -113,6 +124,7 @@
                     // lineStyle: 'height: 50px;', // 定义表格的多行样式
                     parseData: function(res){ //res 即为原始返回的数据
                         const list = res.data ? res.data.map(i => new C_ObjReferenceAudio(i)) : []
+                        _this.audioList = list
                         return {
                             "code": res.code, //解析接口状态
                             "msg": res.msg, //解析提示文本
@@ -143,16 +155,24 @@
                                 return d.language;
                             }},
                         {field:'audioLength', width:'8%', title: '音频时长', sort: true, templet: function(d, k){
-                                return d.audioLength;
+                                return d.audioLength.toFixed(1);
                             }},
                         {field:'opt', width:'20%', title: '操作', templet: function(d, k){
                                  const html = []
                                 html.push(`<button type="button" class="layui-btn layui-btn-xs">切换分类</button>`)
-                                html.push(`<button type="button" class="layui-btn layui-btn-xs">开始比对</button>`)
+                                html.push(`<button type="button" class="layui-btn layui-btn-xs" data-go-to-compare="${d.id}">开始比对</button>`)
                                 return html.join(' ');
                             }},
                     ]],
                     done: function(){
+                        const audioElements = $('#'+_this.viewId+' audio.custom-audio');
+                        // 创建 AudioController 实例并传入音频元素集合
+                        new AudioController(Array.from(audioElements));
+                        
+                        $('#' + _this.viewId + ' button[data-go-to-compare]').on('click', function(){
+                            const id = $(this).attr('data-go-to-compare')
+                            _this.goToCompare(id)
+                        })
                         
                     },
                     error: function(res, msg){
@@ -182,6 +202,14 @@
 
                 });
             }
+
+            goToCompare(id){
+                const _this = this
+                console.log(id)
+                _this.compareAudio = this.audioList.find(i => i.id == id)
+                _this.render(2)
+            }
+            
         }
         
         function getReferenceAudio(viewId) {
@@ -208,8 +236,8 @@
 
     <div class="layui-tab layui-tab-card" style="margin: 0 5px" lay-filter="referenceAudioTabBrief">
         <ul class="layui-tab-title">
-            <li class="layui-this">参考列表</li>
-            <li>参考分类</li>
+            <li class="layui-this" lay-id="1">参考列表</li>
+            <li lay-id="2">参考分类</li>
         </ul>
         <div class="layui-tab-content" style="height: 550px;padding: 5px;">
             <div class="layui-tab-item layui-show" style="height: 100%">
@@ -220,23 +248,25 @@
                 <table class="table1">
                     <tr>
                         <td class="vertical-center">
-                            待比较的音频：
-                            <audio controls>
-                                <source src="path/to/audio.mp3" type="audio/mpeg">
-                                <source src="path/to/audio.ogg" type="audio/ogg">
-                                <!-- 提供备用内容，比如浏览器不支持<audio>标签时显示的信息 -->
-                                您的浏览器不支持 HTML5 audio 标签。
-                            </audio>
+                            
+                            {{# if (d.compareAudio != null) { }}
+
+                                待比较的音频：
+                                <audio controls>
+                                    <source src="{{d.compareAudio.audioPath}}" type="audio/wav">
+                                    <!-- 提供备用内容，比如浏览器不支持<audio>标签时显示的信息 -->
+                                    您的浏览器不支持 HTML5 audio 标签。
+                                </audio>
+                            
+                            {{# } }}
+
                         </td>
                         <td>
                             比对目录：
                             <select class="customSelect">
-                                <option value=""></option>
-                                <option value="0">写作</option>
-                                <option value="1" selected>阅读</option>
-                                <option value="2">游戏</option>
-                                <option value="3">音乐</option>
-                                <option value="4">旅行</option>
+                                {{# layui.each(d.categoryList, function(index,item){ }}
+                                    <option value="{{item.name}}">{{item.name}}</option>
+                                {{# }) }}
                             </select>
                         </td>
                         <td>

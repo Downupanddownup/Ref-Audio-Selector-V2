@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from controller.reference_audio.reference_audio_controller import router as audio_router
-from controller.inference_task.inference_task_controller import router as task_router
-from controller.long_text_inference.long_text_inference_controller import router as long_text_router
-from controller.result_evaluation.result_evaluation_controller import router as result_evaluation_router
-from controller.audio_packaging.audio_packaging_controller import router as audio_packaging_router
-from controller.common_controller import router as common_router
+from server.controller.reference_audio.reference_audio_controller import router as audio_router
+from server.controller.inference_task.inference_task_controller import router as task_router
+from server.controller.long_text_inference.long_text_inference_controller import router as long_text_router
+from server.controller.result_evaluation.result_evaluation_controller import router as result_evaluation_router
+from server.controller.audio_packaging.audio_packaging_controller import router as audio_packaging_router
+from server.controller.common_controller import router as common_router
 
 
 app = FastAPI()
