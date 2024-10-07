@@ -38,6 +38,10 @@
                     obj.find('#startCompareAudio').on('click', function(){
                         _this.startCompareAudio()
                     })
+                    
+                    obj.find('#clearLimitScore').on('click', function(){
+                        $('#' + _this.viewId + ' #limitScore').val('')
+                    })
 
                     layui.element.tabChange('referenceAudioTabBrief', tab_type ? tab_type : '1');
                     
@@ -102,17 +106,22 @@
 
             openReportResult(){
                 const _this = this
-                layer.open({
+
+                const C_ReportResult$1 = ReportResultSpace.getReportResult('reportResultView', _this.compareAudio.id)
+                
+                const index = layer.open({
                     type: 1,
                     area: ['90%', '90%'],
                     content: `<div id="reportResultView"></div>`,
                     btn: ['确定', '取消'],
                     yes: function(){
-                        
+                        const score = C_ReportResult$1.getSelectedScore()
+                        $('#' + _this.viewId + ' #limitScore').val(score)
+                        layui.layer.close(index)
                     }
                 });
-
-                const C_ReportResult$1 = ReportResultSpace.getReportResult('reportResultView', _this.compareAudio.id)
+               
+                C_ReportResult$1.loadAudios()
             }
             
             
@@ -316,8 +325,8 @@
                     <tr>
                         <td>
                             <div style="display: flex">
-                                <input type="number" autocomplete="off" placeholder="请输入待分割值" class="layui-input" style="width: auto;">
-                                <button type="submit" class="layui-btn" >清空分割值</button>
+                                <input type="number" autocomplete="off" id="limitScore" placeholder="请输入待分割值" class="layui-input" style="width: auto;">
+                                <button type="submit" class="layui-btn" id="clearLimitScore">清空分割值</button>
                             </div>
                         </td>
                         <td>
