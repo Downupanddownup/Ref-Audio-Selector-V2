@@ -27,7 +27,13 @@
           obj.html(html)
 
           obj.find('#compareType').on('change', function(){
-            _this.task.compareType = $(this).val()
+            const compareType = $(this).val()
+            _this.task.compareType = compareType
+            if (compareType && compareType != 'refer_audio') {
+              if (_this.task.compareParams.length == 0) {
+                _this.task.compareParams.push(new C_ObjInferenceTaskCompareParams({}))
+              }
+            }
             _this.render()
           })
           
@@ -56,7 +62,7 @@
   <table class="table1">
     <tr>
       <td>比较变量类型：</td>
-      <td>
+      <td colspan="2">
         <select class="customSelect" id="compareType">
           <option value="">请选择</option>
           <option {{isTrue(d.task.compareType=="refer_audio",'selected','')}} value="refer_audio">参考音频</option>
@@ -71,6 +77,138 @@
         </select>
       </td>
     </tr>
+    
+    {{# if (d.task.compareType == 'refer_audio') { }}
+    <tr>
+      <td>
+        
+      </td>
+      <td colspan="2">
+        <button type="submit" class="layui-btn" id="99">请选择音频文件</button>
+      </td>
+    </tr>
+    {{# } else if (d.task.compareType && d.task.compareType != 'refer_audio') { }} 
+    
+     {{# layui.each(d.task.compareParams, function(index, item){ }}
+    
+      {{# if (d.task.compareType == 'gpt_model') { }}
+        <tr>
+          <td>
+            第{{index+1}}组：
+          </td>
+          <td>
+            <select class="customSelect">
+              <option value="v1">v1</option>
+              <option value="v2">v2</option>
+            </select>
+            <select class="customSelect"></select>
+          </td>
+          <td>
+            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+          </td>
+        </tr>
+      {{# } else if (d.task.compareType == 'vits_model') { }}
+        <tr>
+          <td>
+            第{{index+1}}组：
+          </td>
+          <td>
+            <select class="customSelect">
+              <option value="v1">v1</option>
+              <option value="v2">v2</option>
+            </select>
+            <select class="customSelect"></select>
+          </td>
+          <td>
+            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+          </td>
+        </tr>
+      {{# } else if (d.task.compareType == 'top_k') { }}
+        <tr>
+          <td>
+            第{{index+1}}组：
+          </td>
+          <td>
+            <input type="number" autocomplete="off" placeholder="top_k值" class="layui-input" style="width: auto;">
+          </td>
+          <td>
+            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+          </td>
+        </tr>
+      {{# } else if (d.task.compareType == 'top_p') { }}
+    <tr>
+      <td>
+        第{{index+1}}组：
+      </td>
+      <td>
+        <input type="number" autocomplete="off" placeholder="top_p值" class="layui-input" style="width: auto;">
+      </td>
+      <td>
+        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+      </td>
+    </tr>
+      {{# } else if (d.task.compareType == 'temperature') { }}
+    <tr>
+      <td>
+        第{{index+1}}组：
+      </td>
+      <td>
+        <input type="number" autocomplete="off" placeholder="temperature值" class="layui-input" style="width: auto;">
+      </td>
+      <td>
+        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+      </td>
+    </tr>
+      {{# } else if (d.task.compareType == 'speed') { }}
+    <tr>
+      <td>
+        第{{index+1}}组：
+      </td>
+      <td>
+        <input type="number" autocomplete="off" placeholder="speed值" class="layui-input" style="width: auto;">
+      </td>
+      <td>
+        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+      </td>
+    </tr>
+      {{# } else if (d.task.compareType == 'text_delimiter') { }}
+    <tr>
+      <td>
+        第{{index+1}}组：
+      </td>
+      <td>
+        <input type="text" autocomplete="off" placeholder="文本分隔符" class="layui-input" style="width: auto;">
+      </td>
+      <td>
+        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+      </td>
+    </tr>
+      {{# } else if (d.task.compareType == 'other') { }}
+    <tr>
+      <td>
+        第{{index+1}}组：
+      </td>
+      <td>
+        <input type="text" autocomplete="off" placeholder="其余参数" class="layui-input" style="width: auto;">
+      </td>
+      <td>
+        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+      </td>
+    </tr>
+      {{# } }}
+    
+     {{# }) }}
+    
+    {{# } }} 
+    
   </table>
   
   {{# if (d.task.compareType) { }}
