@@ -128,3 +128,22 @@ def str_to_int(input_str, default=None):
     except TypeError:
         # 如果输入不是字符串类型，则抛出错误
         return default
+
+
+def str_to_float(input_str, default=None):
+    """
+    尝试将输入的字符串转换为浮点数。
+    
+    参数:
+    input_str (str): 要转换的字符串。
+    default (float, optional): 如果转换失败时返回的默认值，默认为 None。
+    
+    返回:
+    float or None: 如果成功转换为浮点数，则返回该浮点数；如果转换失败，则返回默认值或 None。
+    """
+    try:
+        # 尝试将字符串转换为浮点数
+        return float(input_str)
+    except ValueError:
+        # 如果转换失败，则返回默认值或 None
+        return default

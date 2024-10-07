@@ -3,6 +3,7 @@ from server.bean.reference_audio.obj_reference_audio_compare_detail import ObjRe
 from server.bean.reference_audio.obj_reference_audio_compare_task import ObjReferenceAudioCompareTask
 from server.dao.reference_audio.reference_audio_compare_dao import ReferenceAudioCompareDao
 from server.service.reference_audio.reference_audio_service import ReferenceAudioService
+from server.service.reference_audio.reference_category_service import ReferenceCategoryService
 
 
 class ReferenceAudioCompareService:
@@ -44,3 +45,14 @@ class ReferenceAudioCompareService:
         for detail in detail_list:
             detail.compare_audio = next(filter(lambda x: x.id == detail.compare_audio_id, audio_list), None)
         return detail_list
+
+    @staticmethod
+    def change_audio_category(task_id: int, target_category: str, limit_score: float) -> int:
+        ReferenceCategoryService.add_category(target_category)
+        compare_audio_list = ReferenceAudioCompareService.get_compare_detail_list_by_task_id(task_id)
+        change_audio_list = []
+        for compare_audio in compare_audio_list:
+            if compare_audio.score >= limit_score and compare_audio.compare_audio.category != target_category:
+                change_audio_list.append(compare_audio.compare_audio)
+        change_audio_id_str = ','.join(str(x.id) for x in change_audio_list)
+        return ReferenceAudioService.update_audio_category(change_audio_id_str, target_category)

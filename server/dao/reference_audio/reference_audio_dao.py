@@ -65,3 +65,10 @@ class ReferenceAudioDao:
             x.audio_length,
             x.valid_or_not
         ) for x in audio_list])
+
+    @staticmethod
+    def update_audio_category(change_audio_id_str: str, target_category: str) -> int:
+        sql = f'''
+        UPDATE tab_obj_reference_audio SET Category = ? WHERE Id IN ({change_audio_id_str})
+        '''
+        return SQLExecutor.execute_update(sql, (target_category,))

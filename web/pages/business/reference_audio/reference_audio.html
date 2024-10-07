@@ -42,11 +42,48 @@
                     obj.find('#clearLimitScore').on('click', function(){
                         $('#' + _this.viewId + ' #limitScore').val('')
                     })
+                    
+                    obj.find('#changeCategory').on('click', function(){
+                        const targetCategory = $('#' + _this.viewId + ' #targetCategory').val()
+                        _this.changeCategory(targetCategory)
+                    })
 
                     layui.element.tabChange('referenceAudioTabBrief', tab_type ? tab_type : '1');
                     
                 });
                 return _this
+            }
+
+            changeCategory(targetCategory){
+                const _this = this
+                if (_this.compareAudio == null) {
+                    layui.layer.alert('请先选择音频文件')
+                    return
+                }
+                if (!targetCategory) {
+                    layui.layer.alert('请输入目标分类')
+                    return
+                }
+                const limitScore = $('#' + _this.viewId + ' #limitScore').val()
+                if (!limitScore) {
+                    layui.layer.alert('请输入分割值')
+                    return
+                }
+                $.customAjax({
+                    url: BaseUrl+'audio/change_audio_category',
+                    type: 'post',
+                    data: {
+                        audioId: _this.compareAudio.id,
+                        limitScore: limitScore,
+                        targetCategory:targetCategory
+                    },
+                    success: function(res){
+                        layui.layer.msg(res.msg)
+                    },
+                    error: function(res, msg){
+                        layui.layer.msg(msg)
+                    }
+                })
             }
 
             startCompareAudio(){
@@ -57,7 +94,7 @@
                 }
                 const compareCategory = $('#' + _this.viewId + ' #compareCategory').val()
                 if (!compareCategory) {
-                    layui.layer.alert('请先选择比对目录')
+                    layui.layer.alert('请先选择比对分类')
                     return
                 }
                 $.customAjax({
@@ -330,10 +367,10 @@
                             </div>
                         </td>
                         <td>
-                            <input type="number" autocomplete="off" placeholder="请输入目标分类名称" class="layui-input" style="width: auto;">
+                            <input type="text" autocomplete="on" id="targetCategory" placeholder="请输入目标分类名称" class="layui-input" style="width: auto;">
                         </td>
                         <td>
-                            <button type="submit" class="layui-btn" >将分割值及以上的音频转入目标分类</button>
+                            <button type="submit" class="layui-btn" id="changeCategory">将分割值及以上的音频转入目标分类</button>
                         </td>
                     </tr>
                 </table>
