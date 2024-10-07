@@ -1,12 +1,12 @@
 .table1 {
-    width: 100%;
+    width: calc(100% - 10px);
     margin: 5px;
     padding: 5px;
     border-collapse: collapse; /* 合并边框 */
 }
 .table1 td, .table1 th {
     text-align: center;
-    border: 1px solid #e0e0e0; /* 更浅的灰色边框 */
+    border: 1px solid #eee; /* 更浅的灰色边框 */
     padding: 20px; /* 内边距 */
 }
 
@@ -17,7 +17,7 @@
 }
 .table2 td, .table2 th {
     text-align: center;
-    border: 1px solid #e0e0e0; /* 更浅的灰色边框 */
+    border: 1px solid #eee; /* 更浅的灰色边框 */
     padding: 7px 5px 5px 5px; /* 内边距 */
 }
 

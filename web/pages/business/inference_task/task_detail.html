@@ -2,25 +2,43 @@
 <script>
   const TaskDetailSpace = (function () {
     class C_TaskDetail {
-      constructor(viewId) {
+      constructor(viewId, taskId) {
         this.viewId = viewId
+        this.taskId = taskId
+        this.task = null
       }
+      
+      loadData(){
+        const _this = this
+        if (_this.taskId && _this.taskId > 0) {
+          
+        } else {
+          _this.task = new C_ObjInferenceTask({})
+          _this.render()
+        }
+      }
+      
       render() {
         const _this = this
         const getTpl = $('#taskDetailTemplate').html();
         // 渲染并输出结果
-        layui.laytpl(getTpl).render({}, function(html){
+        layui.laytpl(getTpl).render(_this, function(html){
           const obj = $('#'+_this.viewId)
           obj.html(html)
 
+          obj.find('#compareType').on('change', function(){
+            _this.task.compareType = $(this).val()
+            _this.render()
+          })
+          
         });
       }
 
 
     }
 
-    function getTaskDetail(viewId) {
-      return new C_TaskDetail(viewId)
+    function getTaskDetail(viewId, taskId) {
+      return new C_TaskDetail(viewId, taskId)
     }
 
     return {
@@ -30,36 +48,44 @@
 </script>
 
 <script id="taskDetailTemplate" type="text/html">
-  <table style="width: 100%">
+
+  <fieldset class="layui-elem-field layui-field-title">
+    <legend>对比参数</legend>
+  </fieldset>
+  
+  <table class="table1">
     <tr>
       <td>比较变量类型：</td>
       <td>
-        <select>
-          <option>请选择</option>
-          <option>参考音频</option>
-          <option>GPT模型</option>
-          <option>Vits模型</option>
-          <option>top_k值</option>
-          <option>top_p值</option>
-          <option>temperature值</option>
-          <option>speed值</option>
-          <option>文本分隔符</option>
-          <option>其余参数</option>
+        <select class="customSelect" id="compareType">
+          <option value="">请选择</option>
+          <option {{isTrue(d.task.compareType=="refer_audio",'selected','')}} value="refer_audio">参考音频</option>
+          <option {{isTrue(d.task.compareType=="gpt_model",'selected','')}} value="gpt_model">GPT模型</option>
+          <option {{isTrue(d.task.compareType=="vits_model",'selected','')}} value="vits_model">Vits模型</option>
+          <option {{isTrue(d.task.compareType=="top_k",'selected','')}} value="top_k">top_k值</option>
+          <option {{isTrue(d.task.compareType=="top_p",'selected','')}} value="top_p">top_p值</option>
+          <option {{isTrue(d.task.compareType=="temperature",'selected','')}} value="temperature">temperature值</option>
+          <option {{isTrue(d.task.compareType=="speed",'selected','')}} value="speed">speed值</option>
+          <option {{isTrue(d.task.compareType=="text_delimiter",'selected','')}} value="text_delimiter">文本分隔符</option>
+          <option {{isTrue(d.task.compareType=="other",'selected','')}} value="other">其余参数</option>
         </select>
       </td>
     </tr>
-    <tr>
-      <td></td>
-    </tr>
   </table>
-  <hr class="layui-border-black">
-  <table style="width: 100%">
+  
+  {{# if (d.task.compareType) { }}
+
+
+  <fieldset class="layui-elem-field layui-field-title">
+    <legend>固定参数</legend>
+  </fieldset>
+  <table class="table1">
     <tr>
       <td>
         GPT-Sovits 版本：
       </td>
       <td>
-        <select>
+        <select class="customSelect">
           <option value="v1">v1</option>
           <option value="v2">v2</option>
         </select>
@@ -68,15 +94,15 @@
         GPT 模型：
       </td>
       <td>
-        <select></select>
-        <button type="button" class="layui-btn layui-btn-xs">刷新</button>
+        <select class="customSelect"></select>
+        <button type="button" class="layui-btn layui-btn-sm">刷新</button>
       </td>
       <td>
         Vits 模型：
       </td>
       <td>
-        <select></select>
-        <button type="button" class="layui-btn layui-btn-xs">刷新</button>
+        <select class="customSelect"></select>
+        <button type="button" class="layui-btn layui-btn-sm">刷新</button>
       </td>
     </tr>
     <tr>
@@ -125,10 +151,24 @@
         15条
       </td>
       <td>推理文本：</td>
-      <td>
+      <td colspan="3">
         30份
       </td>
     </tr>
   </table>
+
+  <fieldset class="layui-elem-field layui-field-title">
+    <legend>请求地址</legend>
+  </fieldset>
+  
+  <table class="table1">
+    <tr>
+      <td>
+        <input type="text" autocomplete="off" placeholder="其余参数" class="layui-input" style="width: 100%;" disabled value="http://localhost:63342/Ref-Audio-Selector-V2/main.html?_ijt=8ie38tk5kmm54s6uc5rhfcbctk&_ij_reload=RELOAD_ON_SAVE">
+      </td>
+    </tr>
+  </table>
+
+  {{# } }}
   
 </script>

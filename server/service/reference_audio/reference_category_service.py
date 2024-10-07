@@ -13,3 +13,7 @@ class ReferenceCategoryService:
     @staticmethod
     def exists_category_name(target_category: str) -> int:
         return ReferenceCategoryDao.exists_category_name(target_category)
+
+    @staticmethod
+    def get_category_list() -> list[ObjInferenceCategory]:
+        return ReferenceCategoryDao.get_category_list()

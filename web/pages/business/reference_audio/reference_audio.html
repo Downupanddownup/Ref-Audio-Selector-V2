@@ -7,14 +7,26 @@
                 this.viewId = viewId
                 this.audioList = []
                 this.compareAudio = null
-                this.categoryList = [
-                    new C_ObjInferenceCategory({
-                        name:'default'
-                    }),
-                    new C_ObjInferenceCategory({
-                        name:'无效'
-                    })
-                ]
+                this.categoryList = []
+            }
+            
+            loadData(tab_type) {
+                const _this = this
+                $.customAjax({
+                    url: BaseUrl+'audio/get_audio_category_list',
+                    type: 'post',
+                    success: function(res){
+                        if (res.code == 0) {
+                            _this.categoryList = res.data ? res.data.map(item=>new C_ObjInferenceCategory(item)) : []
+                            _this.render(tab_type)
+                        } else {
+                            layui.layer.msg(res.msg)
+                        }
+                    },
+                    error: function(res, msg){
+                        layui.layer.msg(msg)
+                    }
+                })
             }
 
             render(tab_type) {

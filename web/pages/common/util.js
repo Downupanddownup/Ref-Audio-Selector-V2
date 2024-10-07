@@ -30,3 +30,8 @@ class AudioController {
         });
     }
 }
+
+
+function isTrue(condition, ifTrue, ifFalse) {
+    return condition ? ifTrue : ifFalse;
+}

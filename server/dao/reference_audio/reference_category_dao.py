@@ -22,3 +22,22 @@ class ReferenceCategoryDao:
         return SQLExecutor.insert(sql, (
             category.name,
         ))
+
+    @staticmethod
+    def get_category_list() -> list[ObjInferenceCategory]:
+        # 查询所有记录的SQL语句
+        select_sql = '''
+            SELECT * FROM tab_obj_inference_category
+            '''
+
+        records = SQLExecutor.execute_query(select_sql, ())
+
+        task_list = []
+
+        for data in records:
+            task_list.append(ObjInferenceCategory(
+                id=data.get('Id'),
+                name=data.get('Name'),
+                create_time=data.get('CreateTime')
+            ))
+        return task_list

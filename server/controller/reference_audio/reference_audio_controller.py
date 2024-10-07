@@ -2,12 +2,14 @@ import sys
 
 from fastapi import APIRouter, Request
 
+from server.bean.reference_audio.obj_inference_category import ObjInferenceCategory
 from server.bean.reference_audio.obj_reference_audio import ObjReferenceAudioFilter
 from server.bean.reference_audio.obj_reference_audio_compare_task import ObjReferenceAudioCompareTask
 from server.common.response_result import ResponseResult
 from server.dao.data_base_manager import db_config
 from server.service.reference_audio.reference_audio_compare_sevice import ReferenceAudioCompareService
 from server.service.reference_audio.reference_audio_service import ReferenceAudioService
+from server.service.reference_audio.reference_category_service import ReferenceCategoryService
 from server.util.util import ValidationUtils, clean_path, str_to_int, str_to_float
 from server.common.log_config import logger
 from subprocess import Popen
@@ -83,6 +85,18 @@ async def change_audio_category(request: Request):
     change_count = ReferenceAudioCompareService.change_audio_category(last_task.id, target_category, limit_score)
 
     return ResponseResult(msg=f'修改{change_count}个音频分类')
+
+
+@router.post("/get_audio_category_list")
+async def get_audio_category_list(request: Request):
+    form_data = await request.form()
+
+    audio_category_list = ReferenceCategoryService.get_category_list()
+
+    audio_category_list.insert(0, ObjInferenceCategory(name='无效'))
+    audio_category_list.insert(0, ObjInferenceCategory(name='default'))
+
+    return ResponseResult(data=audio_category_list)
 
 
 @router.post("/start_compare_audio")

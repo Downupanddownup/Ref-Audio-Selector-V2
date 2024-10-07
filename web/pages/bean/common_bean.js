@@ -25,6 +25,9 @@ class C_ObjInferenceTask {//推理任务
         this.speed = data.speed || 0; // 语速
         this.otherParameters = data.otherParameters || ''; // 其余参数
         this.createTime = data.createTime; // 创建时间, 默认为当前时间
+        this.taskTextList = data.taskTextList ? data.taskTextList.map(item => new C_ObjInferenceTaskText(item)) : [];
+        this.taskAudioList = data.taskAudioList ? data.taskAudioList.map(item => new C_ObjInferenceTaskAudio(item)) : [];
+        this.compareParams = data.compareParams ? data.compareParams.map(item => new C_ObjInferenceTaskCompareParams(item)) : [];
     }
 }
 class C_ObjInferenceTaskText {//推理任务中，相关推理文本
