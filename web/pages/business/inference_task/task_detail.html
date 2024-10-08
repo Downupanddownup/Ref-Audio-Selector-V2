@@ -152,9 +152,48 @@
             _this.task.otherParameters = $(this).val()
           })
           
+          obj.find('#audioSelect').on('click', function() {
+            _this.openAudioSelectDialog()
+          })
+          
+          obj.find('#textManager').on('click', function() {
+            _this.openTextManagerDialog()
+          })
+          
         });
       }
 
+      openAudioSelectDialog(){
+        const _this = this
+        layer.open({
+          type: 1,
+          area: ['90%', '90%'],
+          content: `<div id="audioSelectView"></div>`,
+          btn: ['确定', '取消'],
+          yes: function(){
+
+          }
+        });
+
+        const C_ReferenceSelect$1 = ReferenceSelectSpace.getReferenceSelect('audioSelectView')
+        C_ReferenceSelect$1.render()
+      }
+
+      openTextManagerDialog(){
+        const _this = this
+        layer.open({
+          type: 1,
+          area: ['90%', '90%'],
+          content: `<div id="textManagerView"></div>`,
+          btn: ['确定', '取消'],
+          yes: function(){
+
+          }
+        });
+
+        const C_TextManager$1 = TextManagerSpace.getTextManager('textManagerView')
+        C_TextManager$1.render()
+      }
 
     }
 
@@ -461,12 +500,12 @@
           <td>参考音频：</td>
           <td>
             已选中待推理音频数量：0
-            <button type="button" class="layui-btn layui-btn-sm">音频选择</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="audioSelect">音频选择</button>
           </td>
           <td>推理文本：</td>
           <td colspan="3">
             已选中待推理文本数量：0
-            <button type="button" class="layui-btn layui-btn-sm">文本管理</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="textManager">文本管理</button>
           </td>
         </tr>
       </table>

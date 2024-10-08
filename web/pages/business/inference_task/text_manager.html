@@ -30,5 +30,14 @@
 </script>
 
 <script id="textManagerTemplate" type="text/html">
-  长文推理
+  <div class="layui-tab layui-tab-brief" lay-filter="textManagerTab" style="padding: 10px">
+    <ul class="layui-tab-title">
+      <li class="layui-this">候选列表</li>
+      <li>已选中</li>
+    </ul>
+    <div class="layui-tab-content" style="height: 100px;">
+      <div class="layui-tab-item layui-show"><div id="referenceAudioView"></div></div>
+      <div class="layui-tab-item"><div id="inferenceTaskView"></div></div>
+    </div>
+  </div>
 </script>
