@@ -29,6 +29,20 @@ class AudioController {
             });
         });
     }
+
+    dispatchClickEvent(audioElement) {
+        console.log('播放/暂停按钮被点击');
+        if (audioElement.paused || audioElement.currentTime === 0) {
+            // 如果音频当前是暂停状态或尚未开始播放，则播放音频
+            audioElement.play();
+            console.log('正在播放音频');
+        } else {
+            // 如果音频正在播放，则暂停音频
+            audioElement.pause();
+            console.log('音频已暂停');
+        }
+    }
+    
 }
 
 

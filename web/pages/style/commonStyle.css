@@ -14,6 +14,22 @@
     display: inline;
 }
 
+.table3 {
+    width: calc(100% - 10px);
+    margin: 5px;
+    padding: 5px;
+    border-collapse: collapse; /* 合并边框 */
+}
+.table3 td, .table3 th {
+    text-align: center;
+    border: 0 solid #eee; /* 更浅的灰色边框 */
+    padding: 20px; /* 内边距 */
+}
+
+.table3 input {
+    display: inline;
+}
+
 .table2 {
     width: calc(100% - 10px);
     margin: 5px;

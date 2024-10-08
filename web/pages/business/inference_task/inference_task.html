@@ -32,10 +32,10 @@
                     page: true,
                     cols: [[
                         {field:'index', width:'5%', title: '序号', type: 'numbers'},
-                        {field:'taskName', width:'20%', title: '任务名称', templet: function(d){
+                        {field:'taskName', width:'10%', title: '任务名称', templet: function(d){
                                 return d.audioName;
                             }},
-                        {field:'compareType', width:'20%', title: '任务变量', templet: function(d){
+                        {field:'compareType', width:'10%', title: '任务变量', templet: function(d){
                                 if (d.compareType === 'refer_audio') {
                                     return '参考音频'
                                 }
@@ -65,7 +65,7 @@
                                 }
                                 return d.compareType;
                             }},
-                        {field:'inferenceStatus', width:'20%', title: '推理状态', templet: function(d){
+                        {field:'inferenceStatus', width:'8%', title: '推理状态', templet: function(d){
                                 if (d.inferenceStatus == 0) {
                                     return '待推理'
                                 }
@@ -77,19 +77,19 @@
                                 }
                                 return d.inferenceStatus
                             }},
-                        {field:'executeTextSimilarity', width:'20%', title: '是否已完成文本相似度分析', templet: function(d){
+                        {field:'executeTextSimilarity', width:'8%', title: '文本相似度', templet: function(d){
                                 if (d.executeTextSimilarity == 1) {
                                     return '是'
                                 }
                                 return '否'
                             }},
-                        {field:'executeAudioSimilarity', width:'20%', title: '是否已完成音频相似度分析', templet: function(d){
+                        {field:'executeAudioSimilarity', width:'8%', title: '音频相似度', templet: function(d){
                                 if (d.executeAudioSimilarity == 1) {
                                     return '是'
                                 }
                                 return '否'
                             }},
-                        {field:'opt', width:'20%', title: '操作', templet: function(d){
+                        {field:'opt', width:'15%', title: '操作', templet: function(d){
                                 const html = []
                                 if (d.inferenceStatus == 0) {
                                     html.push(`<button type="button" class="layui-btn layui-btn-xs">编辑</button>`)
@@ -141,7 +141,44 @@
 </script>
 
 <script id="inferenceTaskTemplate" type="text/html">
-    <button type="submit" class="layui-btn" id="createInferenceTask">创建任务</button>
+    
+    <table class="table3">
+        <tr>
+            <td>任务名称：</td>
+            <td><input type="text" autocomplete="off" id="taskName" placeholder="任务名称" class="layui-input" style="width: auto;"></td>
+            <td>变量类型：</td>
+            <td>
+                <select class="customSelect" id="compareType">
+                    <option value="">请选择</option>
+                    <option value="refer_audio">参考音频</option>
+                    <option value="gpt_model">GPT模型</option>
+                    <option value="vits_model">Vits模型</option>
+                    <option value="top_k">top_k值</option>
+                    <option value="top_p">top_p值</option>
+                    <option value="temperature">temperature值</option>
+                    <option value="speed">speed值</option>
+                    <option value="text_delimiter">文本分隔符</option>
+                    <option value="other">其余参数</option>
+                </select>
+            </td>
+            <td>推理状态：</td>
+            <td>
+                <select class="customSelect" id="inferenceStatus">
+                    <option value="-1">请选择</option>
+                    <option value="0">待推理</option>
+                    <option value="1">部分推理</option>
+                    <option value="2">已完成</option>
+                </select>
+            </td>
+            <td colspan="2">
+                <button type="submit" class="layui-btn layui-btn-sm" id="searchTask">搜索</button>
+                <button type="submit" class="layui-btn layui-btn-sm" id="createInferenceTask">创建任务</button>
+                <button type="submit" class="layui-btn layui-btn-sm" id="modelManager">模型管理</button>
+            </td>
+        </tr>
+    </table>
+    
+
     <div class="layui-tab-item layui-show" style="height: 500px">
         <table class="layui-hide" id="inferenceTaskList" lay-filter="inferenceTaskList" style="height: 100%"></table>
     </div>

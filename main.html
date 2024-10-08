@@ -9,40 +9,43 @@
 </head>
 <body>
 
-<div class="layui-collapse" lay-accordion="">
-  <div class="layui-colla-item">
-    <h2 class="layui-colla-title">基础信息</h2>
-    <div class="layui-colla-content layui-show">
-      <table class="table1">
-        <tr>
-          <td>
-            角色名称：<input type="text" id="roleName" autocomplete="on" placeholder="角色名称" class="layui-input" style="width: auto;display: inline" value="七七">
-          </td>
-          <td>
-            <button type="submit" class="layui-btn" onclick="switchAndRefreshWorkspace()">切换并刷新</button>
-          </td>
-        </tr>
-      </table>
+<div id="contentHeader">
+  <div class="layui-collapse" lay-accordion="">
+    <div class="layui-colla-item">
+      <h2 class="layui-colla-title">基础信息</h2>
+      <div class="layui-colla-content layui-show">
+        <table class="table1">
+          <tr>
+            <td>
+              角色名称：<input type="text" id="roleName" autocomplete="on" placeholder="角色名称" class="layui-input" style="width: auto;display: inline" value="七七">
+            </td>
+            <td>
+              <button type="submit" class="layui-btn" onclick="switchAndRefreshWorkspace()">切换并刷新</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+    <ul class="layui-tab-title">
+      <li class="layui-this">参考音频</li>
+      <li>推理任务</li>
+      <li>结果评测</li>
+      <li>长文推理</li>
+      <li>音频打包</li>
+    </ul>
+    <div class="layui-tab-content" style="height: 100px;">
+      <div class="layui-tab-item layui-show"><div id="referenceAudioView"></div></div>
+      <div class="layui-tab-item"><div id="inferenceTaskView"></div></div>
+      <div class="layui-tab-item"><div id="resultEvaluationView"></div></div>
+      <div class="layui-tab-item"><div id="longTextInferenceView"></div></div>
+      <div class="layui-tab-item"><div id="audioPackagingView"></div></div>
     </div>
   </div>
 </div>
 
-<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
-  <ul class="layui-tab-title">
-    <li class="layui-this">参考音频</li>
-    <li>推理任务</li>
-    <li>结果评测</li>
-    <li>长文推理</li>
-    <li>音频打包</li>
-  </ul>
-  <div class="layui-tab-content" style="height: 100px;">
-    <div class="layui-tab-item layui-show"><div id="referenceAudioView"></div></div>
-    <div class="layui-tab-item"><div id="inferenceTaskView"></div></div>
-    <div class="layui-tab-item"><div id="resultEvaluationView"></div></div>
-    <div class="layui-tab-item"><div id="longTextInferenceView"></div></div>
-    <div class="layui-tab-item"><div id="audioPackagingView"></div></div>
-  </div>
-</div>
 
 <!-- body 末尾处引入 layui -->
 <script src="web/layui/layui.js"></script>

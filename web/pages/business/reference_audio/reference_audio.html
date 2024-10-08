@@ -198,7 +198,10 @@
 
             loadReferenceList(){
                 const _this = this
-                const height = $('#referenceAudioList').parent().parent().height() - 50
+
+                const windowHeight = window.innerHeight;
+                
+                const height = windowHeight - $('#contentHeader').height() - 50
                 // 创建渲染实例
                 layui.table.render({
                     elem: '#referenceAudioList',
@@ -235,14 +238,14 @@
                             }},
                         {field:'audioPlay', width:'20%', title: '音频播放', templet: function(d){
                                 return ` 
-                                 <audio controls class="custom-audio">
+                                 <audio controls class="custom-audio" data-audio="${d.id}">
                                     <source src="${d.audioPath}" type="audio/wav">
                                     <!-- 提供备用内容，比如浏览器不支持<audio>标签时显示的信息 -->
                                     您的浏览器不支持 HTML5 audio 标签。
                                 </audio>`
                             }},
                         {field:'content', width:'20%', title: '音频内容', templet: function(d){
-                                return d.content;
+                                return `<div data-content-id="${d.id}" style="cursor: pointer">${d.content}</div>`;
                             }},
                         {field:'language', width:'8%', title: '音频语种', templet: function(d){
                                 return d.language;
@@ -260,7 +263,18 @@
                     done: function(){
                         const audioElements = $('#'+_this.viewId+' audio.custom-audio');
                         // 创建 AudioController 实例并传入音频元素集合
-                        new AudioController(Array.from(audioElements));
+                        const audioController = new AudioController(Array.from(audioElements));
+                        
+                        $('#' + _this.viewId + ' div[data-content-id]').on('click', function() {
+                            const audioId = $(this).attr('data-content-id')
+                            _this.audioList.forEach(i => {
+                                if (i.id == audioId) {
+                                    const audioElement = $('#' + _this.viewId + ' audio[data-audio="' + audioId + '"]')[0]
+                                    console.log('audioElement',audioElement)
+                                    audioController.dispatchClickEvent(audioElement)
+                                }
+                            })
+                        })
                         
                         $('#' + _this.viewId + ' button[data-go-to-compare]').on('click', function(){
                             const id = $(this).attr('data-go-to-compare')
