@@ -8,6 +8,7 @@
         this.task = null
         this.gptModels = []
         this.vitsModels = []
+        this.audioCategoryList = []
       }
       
       loadData(){
@@ -35,22 +36,37 @@
           obj.find('#compareType').on('change', function(){
             const compareType = $(this).val()
             _this.task.compareType = compareType
-            if (compareType && compareType != 'refer_audio') {
-              if (_this.task.compareParams.length == 0) {
-                _this.task.compareParams.push(new C_ObjInferenceTaskCompareParams({}))
-              }
+            _this.task.compareParams = []
+            if (compareType) {
+              _this.task.compareParams.push(new C_ObjInferenceTaskCompareParams({}))
             }
             _this.render()
           })
           
+          if (_this.task.compareType === 'refer_audio') {
+            xmSelect.render({
+              el: '#'+_this.viewId+' #audioCategory',
+              data: _this.audioCategoryList.map(item => {
+                const selected = _this.task.compareParams.find(param => item.name === param.audioCategory)
+                return {
+                  name: item.name,
+                  value: item.name,
+                  selected: !!selected
+                }
+              })
+            })
+          }
+          
           obj.find('button[data-add]').on('click', function(){
             const index = $(this).data('add')
             _this.task.compareParams.splice(index, 0, new C_ObjInferenceTaskCompareParams({}))
+            _this.render()
           })
           
           obj.find('button[data-delete]').on('click', function(){
             const index = $(this).data('delete')
             _this.task.compareParams.splice(index, 1)
+            _this.render()
           })
           
           obj.find('select[data-params-gsv-version]').on('change', function(){
@@ -190,10 +206,10 @@
     {{# if (d.task.compareType == 'refer_audio') { }}
     <tr>
       <td>
-        
+        选择分类：
       </td>
       <td colspan="2">
-        <button type="submit" class="layui-btn" id="99">请选择音频文件</button>
+        <div id="audioCategory"></div>
       </td>
     </tr>
     {{# } else if (d.task.compareType && d.task.compareType != 'refer_audio') { }} 

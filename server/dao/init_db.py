@@ -105,6 +105,7 @@ def init_table(db_path):
     CREATE TABLE IF NOT EXISTS tab_obj_inference_task_compare_params (
         Id INTEGER PRIMARY KEY AUTOINCREMENT, -- SQLite使用AUTOINCREMENT关键字实现自动增长
         TaskId INTEGER COMMENT '任务id', -- SQLite不支持直接在列定义中添加注释
+        AudioCategory TEXT COMMENT '音频分类',
         GptSovitsVersion TEXT COMMENT '模型版本',
         GptModelName TEXT COMMENT 'GPT模型名称',
         VitsModelName TEXT COMMENT 'Vits模型名称',
