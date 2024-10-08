@@ -25,6 +25,9 @@ class C_ObjInferenceTask {//推理任务
         this.textDelimiter = data.textDelimiter || ''; // 文本分隔符
         this.speed = data.speed || 0; // 语速
         this.otherParameters = data.otherParameters || ''; // 其余参数
+        this.inferenceStatus = data.inferenceStatus || 0; // 推理状态 0 待推理 1 推理中 2 推理完成
+        this.executeTextSimilarity = data.executeTextSimilarity || 0;//是否已执行文本相似度 0 否 1 是
+        this.executeAudioSimilarity = data.executeAudioSimilarity || 0;//是否已执行音频相似度 0 否 1 是
         this.createTime = data.createTime; // 创建时间, 默认为当前时间
         this.taskTextList = data.taskTextList ? data.taskTextList.map(item => new C_ObjInferenceTaskText(item)) : [];
         this.taskAudioList = data.taskAudioList ? data.taskAudioList.map(item => new C_ObjInferenceTaskAudio(item)) : [];

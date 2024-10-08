@@ -70,6 +70,9 @@ def init_table(db_path):
         TextDelimiter TEXT COMMENT '文本分隔符',
         Speed REAL COMMENT '语速',
         OtherParameters TEXT COMMENT '其余参数',
+        InferenceStatus INTEGER COMMENT '推理状态 0 待推理 1 推理中 2 推理完成' DEFAULT 0,
+        ExecuteTextSimilarity INTEGER COMMENT '是否已执行文本相似度 0 否 1 是' DEFAULT 0,
+        ExecuteAudioSimilarity INTEGER COMMENT '是否已执行音频相似度 0 否 1 是' DEFAULT 0,
         CreateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- SQLite中默认值可以直接设置
     );
     ''')

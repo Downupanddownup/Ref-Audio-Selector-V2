@@ -5,7 +5,8 @@ class ObjInferenceTask(BaseModel):
     def __init__(self, id=None, task_name=None, compare_type=None, gpt_sovits_version=None,
                  gpt_model_name=None, vits_model_name=None, top_k=None,
                  top_p=None, temperature=None, text_delimiter=None,
-                 speed=None, other_parameters=None, create_time=None):
+                 speed=None, other_parameters=None, create_time=None,
+                 inference_status=None, execute_text_similarity=None, execute_audio_similarity=None):
         self.id = id  # 主键ID，允许从外部传入
         self.task_name = task_name  # 任务名称
         self.compare_type = compare_type  # 比较类型
@@ -18,6 +19,9 @@ class ObjInferenceTask(BaseModel):
         self.text_delimiter = text_delimiter  # 文本分隔符
         self.speed = speed  # 语速
         self.other_parameters = other_parameters  # 其余参数
+        self.inference_status = inference_status  # 推理状态 0 待推理 1 推理中 2 推理完成
+        self.execute_text_similarity = execute_text_similarity  # 是否已执行文本相似度 0 否 1 是
+        self.execute_audio_similarity = execute_audio_similarity  # 是否已执行音频相似度 0 否 1 是
         self.create_time = create_time  # 创建时间，默认为当前时间
 
     def __str__(self):
@@ -28,4 +32,6 @@ class ObjInferenceTask(BaseModel):
                 f"TopK: {self.top_k}, TopP: {self.top_p}, "
                 f"Temperature: {self.temperature}, TextDelimiter: {self.text_delimiter}, "
                 f"Speed: {self.speed}, OtherParameters: {self.other_parameters}, "
+                f"InferenceStatus: {self.inference_status}, ExecuteTextSimilarity: {self.execute_text_similarity}, "
+                f"ExecuteAudioSimilarity: {self.execute_audio_similarity}, "
                 f"CreateTime: {self.create_time}")
