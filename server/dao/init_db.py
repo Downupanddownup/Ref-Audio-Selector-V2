@@ -59,6 +59,7 @@ def init_table(db_path):
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS tab_obj_inference_task (
         Id INTEGER PRIMARY KEY AUTOINCREMENT, -- SQLite使用AUTOINCREMENT关键字实现自动增长
+        TaskName TEXT COMMENT '任务名称', -- 任务名称
         CompareType TEXT COMMENT '比较类型', -- SQLite不支持直接在列定义中添加注释
         GptSovitsVersion TEXT COMMENT '模型版本',
         GptModelName TEXT COMMENT 'GPT模型名称',

@@ -6,6 +6,8 @@
         this.viewId = viewId
         this.taskId = taskId
         this.task = null
+        this.gptModels = []
+        this.vitsModels = []
       }
       
       loadData(){
@@ -25,6 +27,10 @@
         layui.laytpl(getTpl).render(_this, function(html){
           const obj = $('#'+_this.viewId)
           obj.html(html)
+          
+          obj.find('#taskName').on('blur', function(){
+            _this.task.taskName = $(this).val()
+          })
 
           obj.find('#compareType').on('change', function(){
             const compareType = $(this).val()
@@ -35,6 +41,97 @@
               }
             }
             _this.render()
+          })
+          
+          obj.find('button[data-add]').on('click', function(){
+            const index = $(this).data('add')
+            _this.task.compareParams.splice(index, 0, new C_ObjInferenceTaskCompareParams({}))
+          })
+          
+          obj.find('button[data-delete]').on('click', function(){
+            const index = $(this).data('delete')
+            _this.task.compareParams.splice(index, 1)
+          })
+          
+          obj.find('select[data-params-gsv-version]').on('change', function(){
+            const index = $(this).data('params-gsv-version')
+            _this.task.compareParams[index].gptSovitsVersion = $(this).val()
+          })
+          
+          obj.find('select[data-params-gpt-model]').on('change', function(){
+            const index = $(this).data('params-gpt-model')
+            _this.task.compareParams[index].gptModelName = $(this).val()
+          })
+          
+          obj.find('select[data-params-vits-model]').on('change', function(){
+            const index = $(this).data('params-vits-model')
+            _this.task.compareParams[index].vitsModelName = $(this).val()
+          })
+          
+          obj.find('input[data-params-top-k]').on('blur', function(){
+            const index = $(this).data('params-top-k')
+            _this.task.compareParams[index].topK = $(this).val()
+          })
+          
+          obj.find('input[data-params-top-p]').on('blur', function(){
+            const index = $(this).data('params-top-p')
+            _this.task.compareParams[index].topP = $(this).val()
+          })
+          
+          obj.find('input[data-params-temperature]').on('blur', function(){
+            const index = $(this).data('params-temperature')
+            _this.task.compareParams[index].temperature = $(this).val()
+          })
+          
+          obj.find('input[data-params-speed]').on('blur', function(){
+            const index = $(this).data('params-speed')
+            _this.task.compareParams[index].speed = $(this).val()
+          })
+          
+          obj.find('input[data-params-text-delimiter]').on('blur', function(){
+            const index = $(this).data('params-text-delimiter')
+            _this.task.compareParams[index].textDelimiter = $(this).val()
+          })
+          
+          obj.find('input[data-params-other]').on('blur', function(){
+            const index = $(this).data('params-other')
+            _this.task.compareParams[index].otherParameters = $(this).val()
+          })
+          
+          obj.find('#gsvVersion').on('change', function() {
+            _this.task.gptSovitsVersion = $(this).val()
+          })
+          
+          obj.find('#gptModel').on('change', function() {
+            _this.task.gptModelName = $(this).val()
+          })
+          
+          obj.find('#vitsModel').on('change', function() {
+            _this.task.vitsModelName = $(this).val()
+          })
+          
+          obj.find('#topK').on('blur', function(){
+            _this.task.topK = $(this).val()
+          })
+          
+          obj.find('#topP').on('blur', function(){
+            _this.task.topP = $(this).val()
+          })
+          
+          obj.find('#temperature').on('blur', function(){
+            _this.task.temperature = $(this).val()
+          })
+          
+          obj.find('#textDelimiter').on('blur', function(){
+            _this.task.textDelimiter = $(this).val()
+          })
+          
+          obj.find('#speed').on('blur', function(){
+            _this.task.speed = $(this).val()
+          })
+          
+          obj.find('#other').on('blur', function(){
+            _this.task.otherParameters = $(this).val()
           })
           
         });
@@ -54,6 +151,18 @@
 </script>
 
 <script id="taskDetailTemplate" type="text/html">
+
+  <fieldset class="layui-elem-field layui-field-title">
+    <legend>任务名称</legend>
+  </fieldset>
+
+  <table class="table1">
+    <tr>
+      <td>
+        <input type="text" autocomplete="off" id="taskName" placeholder="任务名称" class="layui-input" style="width: 100%;" value="{{d.task.taskName}}">
+      </td>
+    </tr>
+  </table>
 
   <fieldset class="layui-elem-field layui-field-title">
     <legend>对比参数</legend>
@@ -97,15 +206,21 @@
             第{{index+1}}组：
           </td>
           <td>
-            <select class="customSelect">
-              <option value="v1">v1</option>
-              <option value="v2">v2</option>
+            <select class="customSelect" data-params-gsv-version="{{index}}">
+              <option {{isTrue('v1'==d.task.compareParams[index].gptSovitsVersion,'selected','')}} value="v1">v1</option>
+              <option {{isTrue('v2'==d.task.compareParams[index].gptSovitsVersion,'selected','')}} value="v2">v2</option>
             </select>
-            <select class="customSelect"></select>
+            <select class="customSelect" data-params-gpt-model="{{index}}">
+              {{# layui.each(d.gptModels, function(index, item){ }}
+                {{# if (d.task.compareParams[index].gptSovitsVersion == item.version) { }}
+                  <option {{isTrue(item.name==d.task.compareParams[index].gptModelName,'selected','')}} value="{{item.name}}">{{item.name}}</option>
+                {{# } }}
+              {{# }) }}
+            </select>
           </td>
           <td>
-            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+            <button type="button" class="layui-btn layui-btn-sm" data-add="{{index}}"><i class="layui-icon"></i></button>
+            <button type="button" class="layui-btn layui-btn-sm" data-delete="{{index}}"><i class="layui-icon"></i></button>
           </td>
         </tr>
       {{# } else if (d.task.compareType == 'vits_model') { }}
@@ -114,15 +229,21 @@
             第{{index+1}}组：
           </td>
           <td>
-            <select class="customSelect">
-              <option value="v1">v1</option>
-              <option value="v2">v2</option>
+            <select class="customSelect" data-params-gsv-version="{{index}}">
+              <option {{isTrue('v1'==d.task.compareParams[index].gptSovitsVersion,'selected','')}} value="v1">v1</option>
+              <option {{isTrue('v2'==d.task.compareParams[index].gptSovitsVersion,'selected','')}} value="v2">v2</option>
             </select>
-            <select class="customSelect"></select>
+            <select class="customSelect" data-params-vits-model="{{index}}">
+              {{# layui.each(d.vitsModels, function(index, item){ }}
+                {{# if (d.task.compareParams[index].gptSovitsVersion == item.version) { }}
+                  <option {{isTrue(item.name==d.task.compareParams[index].vitsModelName,'selected','')}} value="{{item.name}}">{{item.name}}</option>
+                {{# } }}
+              {{# }) }}
+            </select>
           </td>
           <td>
-            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+            <button type="button" class="layui-btn layui-btn-sm" data-add="{{index}}"><i class="layui-icon"></i></button>
+            <button type="button" class="layui-btn layui-btn-sm" data-delete="{{index}}"><i class="layui-icon"></i></button>
           </td>
         </tr>
       {{# } else if (d.task.compareType == 'top_k') { }}
@@ -131,11 +252,12 @@
             第{{index+1}}组：
           </td>
           <td>
-            <input type="number" autocomplete="off" placeholder="top_k值" class="layui-input" style="width: auto;">
+            <input type="number" autocomplete="off" data-params-top-k="{{index}}" placeholder="top_k值"
+                   class="layui-input" style="width: auto;" value="{{d.task.compareParams[index].topK}}">
           </td>
           <td>
-            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-            <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+            <button type="button" class="layui-btn layui-btn-sm" data-add="{{index}}"><i class="layui-icon"></i></button>
+            <button type="button" class="layui-btn layui-btn-sm" data-delete="{{index}}"><i class="layui-icon"></i></button>
           </td>
         </tr>
       {{# } else if (d.task.compareType == 'top_p') { }}
@@ -144,11 +266,12 @@
         第{{index+1}}组：
       </td>
       <td>
-        <input type="number" autocomplete="off" placeholder="top_p值" class="layui-input" style="width: auto;">
+        <input type="number" autocomplete="off" data-params-top-p="{{index}}" placeholder="top_p值" 
+               class="layui-input" style="width: auto;" value="{{d.task.compareParams[index].topP}}">
       </td>
       <td>
-        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm" data-add="{{index}}"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm" data-delete="{{index}}"><i class="layui-icon"></i></button>
       </td>
     </tr>
       {{# } else if (d.task.compareType == 'temperature') { }}
@@ -157,11 +280,12 @@
         第{{index+1}}组：
       </td>
       <td>
-        <input type="number" autocomplete="off" placeholder="temperature值" class="layui-input" style="width: auto;">
+        <input type="number" autocomplete="off" data-params-temperature="{{index}}" placeholder="temperature值" 
+               class="layui-input" style="width: auto;" value="{{d.task.compareParams[index].temperature}}">
       </td>
       <td>
-        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm" data-add="{{index}}"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm" data-delete="{{index}}"><i class="layui-icon"></i></button>
       </td>
     </tr>
       {{# } else if (d.task.compareType == 'speed') { }}
@@ -170,11 +294,12 @@
         第{{index+1}}组：
       </td>
       <td>
-        <input type="number" autocomplete="off" placeholder="speed值" class="layui-input" style="width: auto;">
+        <input type="number" autocomplete="off" data-params-speed="{{index}}" placeholder="speed值" 
+               class="layui-input" style="width: auto;" value="{{d.task.compareParams[index].speed}}">
       </td>
       <td>
-        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm" data-add="{{index}}"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm" data-delete="{{index}}"><i class="layui-icon"></i></button>
       </td>
     </tr>
       {{# } else if (d.task.compareType == 'text_delimiter') { }}
@@ -183,11 +308,12 @@
         第{{index+1}}组：
       </td>
       <td>
-        <input type="text" autocomplete="off" placeholder="文本分隔符" class="layui-input" style="width: auto;">
+        <input type="text" autocomplete="off" data-params-text-delimiter="{{index}}" placeholder="文本分隔符" 
+               class="layui-input" style="width: auto;" value="{{d.task.compareParams[index].textDelimiter}}">
       </td>
       <td>
-        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm" data-add="{{index}}"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm" data-delete="{{index}}"><i class="layui-icon"></i></button>
       </td>
     </tr>
       {{# } else if (d.task.compareType == 'other') { }}
@@ -196,11 +322,12 @@
         第{{index+1}}组：
       </td>
       <td>
-        <input type="text" autocomplete="off" placeholder="其余参数" class="layui-input" style="width: auto;">
+        <input type="text" autocomplete="off" data-params-other="{{index}}" placeholder="其余参数" 
+               class="layui-input" style="width: auto;" value="{{d.task.compareParams[index].otherParameters}}">
       </td>
       <td>
-        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-        <button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm" data-add="{{index}}"><i class="layui-icon"></i></button>
+        <button type="button" class="layui-btn layui-btn-sm" data-delete="{{index}}"><i class="layui-icon"></i></button>
       </td>
     </tr>
       {{# } }}
@@ -223,23 +350,36 @@
         GPT-Sovits 版本：
       </td>
       <td>
-        <select class="customSelect">
-          <option value="v1">v1</option>
-          <option value="v2">v2</option>
+        <select class="customSelect" id="gsvVersion">
+          <option {{isTrue(d.task.gptSovitsVersion=="v1",'selected','')}} value="v1">v1</option>
+          <option {{isTrue(d.task.gptSovitsVersion=="v2",'selected','')}} value="v2">v2</option>
         </select>
+        <button type="button" class="layui-btn layui-btn-sm">模型管理</button>
       </td>
       <td>
         GPT 模型：
       </td>
       <td>
-        <select class="customSelect"></select>
+        <select class="customSelect" id="gptModel">
+          {{# layui.each(d.gptModels, function(index, item){ }}
+            {{# if (d.task.gptSovitsVersion == item.version) { }}
+              <option {{isTrue(item.name==d.task.gptModelName,'selected','')}} value="{{item.name}}">{{item.name}}</option>
+            {{# } }}
+          {{# }) }}
+        </select>
         <button type="button" class="layui-btn layui-btn-sm">刷新</button>
       </td>
       <td>
         Vits 模型：
       </td>
       <td>
-        <select class="customSelect"></select>
+        <select class="customSelect" id="vitsModel">
+          {{# layui.each(d.vitsModels, function(index, item){ }}
+            {{# if (d.task.gptSovitsVersion == item.version) { }}
+              <option {{isTrue(item.name==d.task.vitsModelName,'selected','')}} value="{{item.name}}">{{item.name}}</option>
+            {{# } }}
+          {{# }) }}
+        </select>
         <button type="button" class="layui-btn layui-btn-sm">刷新</button>
       </td>
     </tr>
@@ -248,19 +388,19 @@
         top_k值：
       </td>
       <td>
-        <input type="number" autocomplete="off" placeholder="top_k值" class="layui-input" style="width: auto;">
+        <input type="number" autocomplete="off" id="topK" placeholder="top_k值" class="layui-input" style="width: auto;" value="{{d.task.topK}}">
       </td>
       <td>
         top_p值：
       </td>
       <td>
-        <input type="number" autocomplete="off" placeholder="top_p值" class="layui-input" style="width: auto;">
+        <input type="number" autocomplete="off" id="topP" placeholder="top_p值" class="layui-input" style="width: auto;" value="{{d.task.topP}}">
       </td>
       <td>
         temperature值：
       </td>
       <td>
-        <input type="number" autocomplete="off" placeholder="temperature值" class="layui-input" style="width: auto;">
+        <input type="number" autocomplete="off" id="temperature" placeholder="temperature值" class="layui-input" style="width: auto;" value="{{d.task.temperature}}">
       </td>
     </tr>
     <tr>
@@ -268,29 +408,31 @@
         文本分隔符：
       </td>
       <td>
-        <input type="text" autocomplete="off" placeholder="文本分隔符" class="layui-input" style="width: auto;">
+        <input type="text" autocomplete="off" id="textDelimiter" placeholder="文本分隔符" class="layui-input" style="width: auto;" value="{{d.task.textDelimiter}}">
       </td>
       <td>
         speed值：
       </td>
       <td>
-        <input type="number" autocomplete="off" placeholder="speed值" class="layui-input" style="width: auto;">
+        <input type="number" autocomplete="off" id="speed" placeholder="speed值" class="layui-input" style="width: auto;" value="{{d.task.speed}}">
       </td>
       <td>
         其余参数：
       </td>
       <td>
-        <input type="text" autocomplete="off" placeholder="其余参数" class="layui-input" style="width: auto;">
+        <input type="text" autocomplete="off" id="other" placeholder="其余参数" class="layui-input" style="width: auto;" value="{{d.task.otherParameters}}">
       </td>
     </tr>
     <tr>
       <td>参考音频：</td>
       <td>
-        15条
+        已选中待推理音频数量：0
+        <button type="button" class="layui-btn layui-btn-sm">音频选择</button>
       </td>
       <td>推理文本：</td>
       <td colspan="3">
-        30份
+        已选中待推理文本数量：0
+        <button type="button" class="layui-btn layui-btn-sm">文本管理</button>
       </td>
     </tr>
   </table>

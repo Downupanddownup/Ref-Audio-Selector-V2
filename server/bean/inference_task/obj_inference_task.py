@@ -2,11 +2,12 @@ from server.bean.base_model import BaseModel
 
 
 class ObjInferenceTask(BaseModel):
-    def __init__(self, id=None, compare_type=None, gpt_sovits_version=None,
+    def __init__(self, id=None, task_name=None, compare_type=None, gpt_sovits_version=None,
                  gpt_model_name=None, vits_model_name=None, top_k=None,
                  top_p=None, temperature=None, text_delimiter=None,
                  speed=None, other_parameters=None, create_time=None):
         self.id = id  # 主键ID，允许从外部传入
+        self.task_name = task_name  # 任务名称
         self.compare_type = compare_type  # 比较类型
         self.gpt_sovits_version = gpt_sovits_version  # 模型版本
         self.gpt_model_name = gpt_model_name  # GPT模型名称
@@ -20,7 +21,7 @@ class ObjInferenceTask(BaseModel):
         self.create_time = create_time  # 创建时间，默认为当前时间
 
     def __str__(self):
-        return (f"Id: {self.id}, CompareType: {self.compare_type}, "
+        return (f"Id: {self.id}, TaskName: {self.task_name}, CompareType: {self.compare_type}, "
                 f"GptSovitsVersion: {self.gpt_sovits_version}, "
                 f"GptModelName: {self.gpt_model_name}, "
                 f"VitsModelName: {self.vits_model_name}, "

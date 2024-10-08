@@ -14,6 +14,7 @@ class C_ObjReferenceAudio {//参考音频
 class C_ObjInferenceTask {//推理任务
     constructor(data) {
         this.id = data.id ? data.id : 0; // 自增编号
+        this.taskName = data.taskName || ''; // 任务名称
         this.compareType = data.compareType || ''; // 比较类型
         this.gptSovitsVersion = data.gptSovitsVersion || ''; // 模型版本
         this.gptModelName = data.gptModelName || ''; // GPT模型名称
@@ -116,3 +117,20 @@ class C_ObjReferenceAudioCompareDetail {
         this.compareAudio = data.compareAudio ? new C_ObjReferenceAudio(data.compareAudio) : null;
     }
 }
+
+class C_GptModel {
+    constructor(data) {
+        this.version = data.version || '';//模型版本
+        this.name = data.name || '';//模型名称
+    }
+}
+
+class C_VitsModel {
+    constructor(data) {
+        this.version = data.version || '';//模型版本
+        this.name = data.name || '';//模型名称
+    }
+}
+
+
+
