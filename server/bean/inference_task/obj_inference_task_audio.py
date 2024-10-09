@@ -1,7 +1,7 @@
 from server.bean.base_model import BaseModel
 
 
-class TabObjInferenceTaskAudio(BaseModel):
+class ObjInferenceTaskAudio(BaseModel):
     def __init__(self, id=None, task_id=None, audio_id=None, audio_name=None,
                  audio_path=None, audio_content=None, audio_language=None, create_time=None):
         self.id = id  # 主键ID，允许从外部传入

@@ -1,4 +1,7 @@
 from server.bean.base_model import BaseModel
+from server.bean.inference_task.obj_inference_task_audio import ObjInferenceTaskAudio
+from server.bean.inference_task.obj_inference_task_compare_params import ObjInferenceTaskCompareParams
+from server.bean.inference_task.obj_inference_task_text import ObjInferenceTaskText
 from server.common.filter import Filter
 from server.util.util import ValidationUtils
 
@@ -8,7 +11,9 @@ class ObjInferenceTask(BaseModel):
                  gpt_model_name=None, vits_model_name=None, top_k=None,
                  top_p=None, temperature=None, text_delimiter=None,
                  speed=None, other_parameters=None, create_time=None,
-                 inference_status=None, execute_text_similarity=None, execute_audio_similarity=None):
+                 inference_status=0, execute_text_similarity=0, execute_audio_similarity=0,
+                 audio_list: list[ObjInferenceTaskAudio] = None, param_list: list[ObjInferenceTaskCompareParams] = None,
+                 text_list: list[ObjInferenceTaskText] = None):
         self.id = id  # 主键ID，允许从外部传入
         self.task_name = task_name  # 任务名称
         self.compare_type = compare_type  # 比较类型
@@ -25,6 +30,9 @@ class ObjInferenceTask(BaseModel):
         self.execute_text_similarity = execute_text_similarity  # 是否已执行文本相似度 0 否 1 是
         self.execute_audio_similarity = execute_audio_similarity  # 是否已执行音频相似度 0 否 1 是
         self.create_time = create_time  # 创建时间，默认为当前时间
+        self.audio_list = audio_list
+        self.param_list = param_list
+        self.text_list = text_list
 
     def __str__(self):
         return (f"Id: {self.id}, TaskName: {self.task_name}, CompareType: {self.compare_type}, "

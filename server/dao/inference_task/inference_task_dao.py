@@ -1,5 +1,8 @@
 from server.bean.inference_task.obj_inference_task import ObjInferenceTaskFilter, ObjInferenceTask
-from server.dao.data_base_manager import DBSlaveSQLExecutor
+from server.bean.inference_task.obj_inference_task_audio import ObjInferenceTaskAudio
+from server.bean.inference_task.obj_inference_task_compare_params import ObjInferenceTaskCompareParams
+from server.bean.inference_task.obj_inference_task_text import ObjInferenceTaskText
+from server.dao.data_base_manager import DBSlaveSQLExecutor, DBMasterSQLExecutor
 
 
 class InferenceTaskDao:
@@ -57,3 +60,71 @@ class InferenceTaskDao:
                 create_time=data.get('CreateTime')
             ))
         return text_list
+
+    @staticmethod
+    def insert_inference_task(task: ObjInferenceTask) -> int:
+        sql = '''
+            INSERT INTO tab_obj_inference_task(TaskName,CompareType,GptSovitsVersion,GptModelName,VitsModelName,TopK,TopP,Temperature,TextDelimiter,Speed,OtherParameters,InferenceStatus,ExecuteTextSimilarity,ExecuteAudioSimilarity,CreateTime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'))
+            '''
+        return DBMasterSQLExecutor.insert(sql, (
+            task.task_name,
+            task.compare_type,
+            task.gpt_sovits_version,
+            task.gpt_model_name,
+            task.vits_model_name,
+            task.top_k,
+            task.top_p,
+            task.temperature,
+            task.text_delimiter,
+            task.speed,
+            task.other_parameters,
+            task.inference_status,
+            task.execute_text_similarity,
+            task.execute_audio_similarity
+        ))
+
+    @staticmethod
+    def batch_insert_task_param(param_list: list[ObjInferenceTaskCompareParams]) -> int:
+        sql = '''
+        INSERT INTO tab_obj_inference_task_compare_params(TaskId,AudioCategory,GptSovitsVersion,GptModelName,VitsModelName,TopK,TopP,Temperature,TextDelimiter,Speed,OtherParameters,CreateTime) VALUES (?,?,?,?,?,?,?,?,?,?,?,datetime('now'))
+        '''
+        return DBSlaveSQLExecutor.batch_execute(sql, [(
+            x.task_id,
+            x.audio_category,
+            x.gpt_sovits_version,
+            x.gpt_model_name,
+            x.vits_model_name,
+            x.top_k,
+            x.top_p,
+            x.temperature,
+            x.text_delimiter,
+            x.speed,
+            x.other_parameters
+        ) for x in param_list])
+
+    @staticmethod
+    def batch_insert_task_audio(audio_list: list[ObjInferenceTaskAudio]) -> int:
+        sql = '''
+        INSERT INTO tab_obj_inference_task_audio(TaskId,AudioId,AudioName,AudioPath,AudioContent,AudioLanguage,CreateTime) VALUES (?,?,?,?,?,?,datetime('now'))
+        '''
+        return DBSlaveSQLExecutor.batch_execute(sql, [(
+            x.task_id,
+            x.audio_id,
+            x.audio_name,
+            x.audio_path,
+            x.audio_content,
+            x.audio_language
+        ) for x in audio_list])
+
+    @staticmethod
+    def batch_insert_task_text(text_list: list[ObjInferenceTaskText]) -> int:
+        sql = '''
+        INSERT INTO tab_obj_inference_task_text(TaskId,TextId,Category,TextContent,TextLanguage,CreateTime) VALUES (?,?,?,?,?,datetime('now'))
+        '''
+        return DBSlaveSQLExecutor.batch_execute(sql, [(
+            x.task_id,
+            x.text_id,
+            x.category,
+            x.text_content,
+            x.text_language
+        ) for x in text_list])

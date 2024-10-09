@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Request
 
-from server.bean.inference_task.obj_inference_task import ObjInferenceTaskFilter
+from server.bean.inference_task.obj_inference_task import ObjInferenceTaskFilter, ObjInferenceTask
+from server.bean.inference_task.obj_inference_task_audio import ObjInferenceTaskAudio
+from server.bean.inference_task.obj_inference_task_compare_params import ObjInferenceTaskCompareParams
+from server.bean.inference_task.obj_inference_task_text import ObjInferenceTaskText
 from server.bean.inference_task.obj_inference_text import ObjInferenceTextFilter, ObjInferenceText
 from server.common.response_result import ResponseResult
 from server.service.inference_task.inference_task_service import InferenceTaskService
@@ -17,7 +20,6 @@ async def get_inference_text_list(request: Request):
 
     count = InferenceTextService.find_count(text_filter)
     text_list = InferenceTextService.find_list(text_filter)
-
     return ResponseResult(data=text_list, count=count)
 
 
@@ -73,3 +75,66 @@ async def get_inference_task_list(request: Request):
     task_list = InferenceTaskService.find_list(task_filter)
 
     return ResponseResult(data=task_list, count=count)
+
+
+@router.post("/insert_inference_task")
+async def insert_inference_task(request: Request):
+    form_data = await request.json()
+    task = ObjInferenceTask(
+        task_name=form_data.get('taskName'),
+        compare_type=form_data.get('compareType'),
+        gpt_sovits_version=form_data.get('gptSovitsVersion'),
+        gpt_model_name=form_data.get('gptModelName'),
+        vits_model_name=form_data.get('vitsModelName'),
+        top_k=form_data.get('topK'),
+        top_p=form_data.get('topP'),
+        temperature=form_data.get('temperature'),
+        text_delimiter=form_data.get('textDelimiter'),
+        speed=form_data.get('speed'),
+        other_parameters=form_data.get('otherParameters'),
+    )
+
+    audio_list = form_data.get('taskAudioList')
+    text_list = form_data.get('taskTextList')
+    param_list = form_data.get('compareParams')
+
+    task_audio_list = []
+    for audio in audio_list:
+        task_audio_list.append(ObjInferenceTaskAudio(
+            audio_id=audio.get('audioId'),
+            audio_name=audio.get('audioName'),
+            audio_path=audio.get('audioPath'),
+            audio_content=audio.get('audioContent'),
+            audio_language=audio.get('audioLanguage')
+        ))
+    task.audio_list = task_audio_list
+
+    task_text_list = []
+    for text in text_list:
+        task_text_list.append(ObjInferenceTaskText(
+            text_id=text.get('textId'),
+            category=text.get('category'),
+            text_content=text.get('textContent'),
+            text_language=text.get('textLanguage')
+        ))
+    task.text_list = task_text_list
+
+    task_param_list = []
+    for param in param_list:
+        task_param_list.append(ObjInferenceTaskCompareParams(
+            audio_category=param.get('audioCategory'),
+            gpt_sovits_version=param.get('gptSovitsVersion'),
+            gpt_model_name=param.get('gptModelName'),
+            vits_model_name=param.get('vitsModelName'),
+            top_k=param.get('topK'),
+            top_p=param.get('topP'),
+            temperature=param.get('temperature'),
+            text_delimiter=param.get('textDelimiter'),
+            speed=param.get('speed'),
+            other_parameters=param.get('otherParameters')
+        ))
+    task.param_list = task_param_list
+
+    task_id = InferenceTaskService.add_inference_task(task)
+
+    return ResponseResult(data={"task_id": task_id})

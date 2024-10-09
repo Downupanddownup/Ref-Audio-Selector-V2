@@ -1,16 +1,18 @@
 import webbrowser
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
+from server.common.custom_exception import CustomException
+from server.common.response_result import ResponseResult
 from server.controller.reference_audio.reference_audio_controller import router as audio_router
 from server.controller.inference_task.inference_task_controller import router as task_router
 from server.controller.long_text_inference.long_text_inference_controller import router as long_text_router
 from server.controller.result_evaluation.result_evaluation_controller import router as result_evaluation_router
 from server.controller.audio_packaging.audio_packaging_controller import router as audio_packaging_router
 from server.controller.common_controller import router as common_router
-
 
 app = FastAPI()
 app.add_middleware(
@@ -20,6 +22,19 @@ app.add_middleware(
     allow_methods=["*"],  # 允许所有方法
     allow_headers=["*"],  # 允许所有头
 )
+
+
+# 自定义异常处理器
+@app.exception_handler(CustomException)
+async def custom_exception_handler(request: Request, exc: CustomException):
+    return ResponseResult(code=1, msg=exc.message)
+
+
+# 注册默认的异常处理器
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    return ResponseResult(code=2, msg=exc.message)
+
 
 # 注册路由
 app.include_router(audio_router)
@@ -31,7 +46,6 @@ app.include_router(common_router)
 
 # Mount static files directory
 app.mount("/static", StaticFiles(directory="."), name="static")
-
 
 if __name__ == "__main__":
     import uvicorn

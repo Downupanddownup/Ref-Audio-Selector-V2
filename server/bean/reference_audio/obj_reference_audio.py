@@ -31,6 +31,7 @@ class ObjReferenceAudioFilter(Filter):
         self.audio_name = form_data.get('audio_name')
         self.content = form_data.get('content')
         self.category = form_data.get('category')
+        self.category_list_str = form_data.get('category_list_str')
 
     def make_sql(self) -> []:
         sql = ''
@@ -51,5 +52,7 @@ class ObjReferenceAudioFilter(Filter):
         if not ValidationUtils.is_empty(self.category):
             sql += f" and category = ? "
             condition.append(f"{self.category}")
+        if not ValidationUtils.is_empty(self.category_list_str):
+            sql += f" and category in ({self.category_list_str}) "
 
         return sql, tuple(condition)
