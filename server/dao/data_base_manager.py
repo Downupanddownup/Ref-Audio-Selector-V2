@@ -2,7 +2,8 @@ import os.path
 import sqlite3
 from typing import List, Dict
 
-from server.dao.init_db import init_table
+from server.dao.init_slave_table import init_slave_table
+from server.dao.init_master_table import init_master_table
 
 
 class SingletonMeta(type):
@@ -25,7 +26,8 @@ class DatabaseConfig(metaclass=SingletonMeta):
     def update_db_path(self, role_name: str):
         self.role_name = role_name
         self.db_path = f'{self.get_work_dir()}\\ref_audio_selector.db'
-        init_table(self.db_path)
+        init_slave_table(self.db_path)
+        init_master_table(self.db_master_path)
 
     def get_work_dir(self) -> str:
         work_dir = f'{self.workspace}\\{self.role_name}'

@@ -8,6 +8,8 @@ from server.bean.inference_task.obj_inference_text import ObjInferenceTextFilter
 from server.common.response_result import ResponseResult
 from server.service.inference_task.inference_task_service import InferenceTaskService
 from server.service.inference_task.inference_text_service import InferenceTextService
+from server.service.inference_task.model_manager_service import ModelManagerService
+from server.service.reference_audio.reference_category_service import ReferenceCategoryService
 from server.util.util import str_to_int
 
 router = APIRouter(prefix="/task")
@@ -138,3 +140,23 @@ async def insert_inference_task(request: Request):
     task_id = InferenceTaskService.add_inference_task(task)
 
     return ResponseResult(data={"task_id": task_id})
+
+
+@router.post("/load_inference_task_detail")
+async def load_inference_task_detail(request: Request):
+    form_data = await request.json()
+    task_id = str_to_int(form_data.get('task_id')),
+    task = None
+    if task_id > 0:
+        task = InferenceTaskService.find_whole_inference_task_by_id(task_id)
+
+    category_list = ReferenceCategoryService.get_category_list()
+    gpt_model_list = ModelManagerService.get_gpt_model_list()
+    vits_model_list = ModelManagerService.get_vits_model_list()
+
+    return ResponseResult(data={
+        "task": task,
+        "category_list": category_list,
+        "gpt_model_list": gpt_model_list,
+        "vits_model_list": vits_model_list
+    })

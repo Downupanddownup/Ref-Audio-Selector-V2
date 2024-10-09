@@ -1,5 +1,7 @@
 from server.bean.inference_task.obj_inference_task import ObjInferenceTaskFilter, ObjInferenceTask
 from server.bean.inference_task.obj_inference_task_audio import ObjInferenceTaskAudio
+from server.bean.inference_task.obj_inference_task_compare_params import ObjInferenceTaskCompareParams
+from server.bean.inference_task.obj_inference_task_text import ObjInferenceTaskText
 from server.bean.reference_audio.obj_reference_audio import ObjReferenceAudioFilter
 from server.common.custom_exception import CustomException
 from server.dao.inference_task.inference_task_dao import InferenceTaskDao
@@ -56,3 +58,26 @@ class InferenceTaskService:
             raise CustomException("推理文本不能为空")
         if task.compare_type != 'refer_audio' and len(task.audio_list) == 0:
             raise CustomException("音频列表不能为空")
+
+    @staticmethod
+    def find_whole_inference_task_by_id(task_id: int) -> ObjInferenceTask:
+        task_list = InferenceTaskService.find_list(ObjInferenceTaskFilter({'id': task_id}))
+        if len(task_list) == 0:
+            return None
+        task = task_list[0]
+        task.param_list = InferenceTaskService.get_task_param_list_by_task_id(task_id)
+        task.audio_list = InferenceTaskService.get_task_audio_list_by_task_id(task_id)
+        task.text_list = InferenceTaskService.get_task_text_list_by_task_id(task_id)
+        return task
+
+    @staticmethod
+    def get_task_param_list_by_task_id(task_id: int) -> list[ObjInferenceTaskCompareParams]:
+        return InferenceTaskDao.get_task_param_list_by_task_id(task_id)
+
+    @staticmethod
+    def get_task_audio_list_by_task_id(task_id: int) -> list[ObjInferenceTaskAudio]:
+        return InferenceTaskDao.get_task_audio_list_by_task_id(task_id)
+
+    @staticmethod
+    def get_task_text_list_by_task_id(task_id: int) -> list[ObjInferenceTaskText]:
+        return InferenceTaskDao.get_task_text_list_by_task_id(task_id)

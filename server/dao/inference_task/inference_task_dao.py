@@ -128,3 +128,73 @@ class InferenceTaskDao:
             x.text_content,
             x.text_language
         ) for x in text_list])
+
+    @staticmethod
+    def get_task_param_list_by_task_id(task_id: int) -> list[ObjInferenceTaskCompareParams]:
+        # 查询所有记录的SQL语句
+        select_sql = '''
+            SELECT * FROM tab_obj_inference_task_compare_params where TaskId = ?
+            '''
+
+        records = DBSlaveSQLExecutor.execute_query(select_sql, (task_id,))
+        record_list = []
+        for data in records:
+            record_list.append(ObjInferenceTaskCompareParams(
+                id=data.get('Id'),
+                task_id=data.get('TaskId'),
+                audio_category=data.get('AudioCategory'),
+                gpt_sovits_version=data.get('GptSovitsVersion'),
+                gpt_model_name=data.get('GptModelName'),
+                vits_model_name=data.get('VitsModelName'),
+                top_k=data.get('TopK'),
+                top_p=data.get('TopP'),
+                temperature=data.get('Temperature'),
+                text_delimiter=data.get('TextDelimiter'),
+                speed=data.get('Speed'),
+                other_parameters=data.get('OtherParameters'),
+                create_time=data.get('CreateTime')
+            ))
+        return record_list
+
+    @staticmethod
+    def get_task_audio_list_by_task_id(task_id: int) -> list[ObjInferenceTaskAudio]:
+        # 查询所有记录的SQL语句
+        select_sql = '''
+            SELECT * FROM tab_obj_inference_task_audio where TaskId = ?
+            '''
+
+        records = DBSlaveSQLExecutor.execute_query(select_sql, (task_id,))
+        record_list = []
+        for data in records:
+            record_list.append(ObjInferenceTaskAudio(
+                id=data.get('Id'),
+                task_id=data.get('TaskId'),
+                audio_id=data.get('AudioId'),
+                audio_name=data.get('AudioName'),
+                audio_path=data.get('AudioPath'),
+                audio_content=data.get('AudioContent'),
+                audio_language=data.get('AudioLanguage'),
+                create_time=data.get('CreateTime')
+            ))
+        return record_list
+
+    @staticmethod
+    def get_task_text_list_by_task_id(task_id: int) -> list[ObjInferenceTaskText]:
+        # 查询所有记录的SQL语句
+        select_sql = '''
+            SELECT * FROM tab_obj_inference_task_text where TaskId = ?
+            '''
+
+        records = DBSlaveSQLExecutor.execute_query(select_sql, (task_id,))
+        record_list = []
+        for data in records:
+            record_list.append(ObjInferenceTaskText(
+                id=data.get('Id'),
+                task_id=data.get('TaskId'),
+                text_id=data.get('TextId'),
+                category=data.get('Category'),
+                text_content=data.get('TextContent'),
+                text_language=data.get('TextLanguage'),
+                create_time=data.get('CreateTime')
+            ))
+        return record_list
