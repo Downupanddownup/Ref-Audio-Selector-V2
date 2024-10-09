@@ -1,5 +1,5 @@
 from server.bean.reference_audio.obj_inference_category import ObjInferenceCategory
-from server.dao.data_base_manager import SQLExecutor
+from server.dao.data_base_manager import DBSlaveSQLExecutor
 
 
 class ReferenceCategoryDao:
@@ -10,7 +10,7 @@ class ReferenceCategoryDao:
             SELECT COUNT(1) FROM tab_obj_inference_category where Name = ? 
             '''
 
-        count = SQLExecutor.get_count(select_sql, (category,))
+        count = DBSlaveSQLExecutor.get_count(select_sql, (category,))
 
         return count
 
@@ -19,7 +19,7 @@ class ReferenceCategoryDao:
         sql = '''
             INSERT INTO tab_obj_inference_category(Name,CreateTime) VALUES (?,datetime('now'))
             '''
-        return SQLExecutor.insert(sql, (
+        return DBSlaveSQLExecutor.insert(sql, (
             category.name,
         ))
 
@@ -30,7 +30,7 @@ class ReferenceCategoryDao:
             SELECT * FROM tab_obj_inference_category
             '''
 
-        records = SQLExecutor.execute_query(select_sql, ())
+        records = DBSlaveSQLExecutor.execute_query(select_sql, ())
 
         task_list = []
 

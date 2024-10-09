@@ -39,6 +39,7 @@ class C_ObjInferenceTaskText {//推理任务中，相关推理文本
         this.id = data.id ? data.id : 0; // 自增编号
         this.taskId = data.taskId || 0; // 推理任务id
         this.textId = data.textId || 0; // 推理文本id
+        this.category = data.category || ''; // 文本分类
         this.textContent = data.textContent || ''; // 推理文本
         this.textLanguage = data.textLanguage || ''; // 文本语种
         this.createTime = data.createTime; // 创建时间, 默认为当前时间
@@ -71,6 +72,15 @@ class C_ObjInferenceTaskCompareParams {//推理任务中，对比的变量
         this.speed = data.speed || 0; // 语速
         this.otherParameters = data.otherParameters || ''; // 其余参数
         this.createTime = data.createTime ? new Date(data.createTime) : null; // 创建时间, 默认为当前时间
+    }
+}
+class C_ObjInferenceText {//推理文本
+    constructor(data) {
+        this.id = data.id ? data.id : 0; // 自增编号
+        this.category = data.category || ''; // 文本分类
+        this.textContent = data.textContent || ''; // 推理文本
+        this.textLanguage = data.textLanguage || ''; // 文本语种
+        this.createTime = data.createTime; // 创建时间, 默认为当前时间
     }
 }
 class C_ObjInferenceTaskResultAudio {//推理任务的推理结果音频

@@ -10,6 +10,17 @@ def init_table(db_path):
 
     # 创建一个新表
     cursor.execute('''
+    CREATE TABLE IF NOT EXISTS tab_obj_inference_text (
+        Id INTEGER PRIMARY KEY AUTOINCREMENT, -- SQLite使用INTEGER PRIMARY KEY AUTOINCREMENT来实现自增功能
+        Category TEXT, -- 分类
+        TextContent TEXT, -- 文本
+        TextLanguage TEXT, -- 语种
+        CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- SQLite中默认的时间戳格式
+    );
+    ''')
+
+    # 创建一个新表
+    cursor.execute('''
     CREATE TABLE IF NOT EXISTS tab_obj_reference_audio_compare_detail (
         Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, -- SQLite使用INTEGER PRIMARY KEY AUTOINCREMENT
         TaskId INTEGER, -- MySQL的int(11)在SQLite中可以简单地用INTEGER表示
@@ -83,6 +94,7 @@ def init_table(db_path):
         Id INTEGER PRIMARY KEY AUTOINCREMENT, -- SQLite使用AUTOINCREMENT关键字实现自动增长
         TaskId INTEGER COMMENT '推理任务id', -- SQLite不支持直接在列定义中添加注释
         TextId INTEGER COMMENT '推理文本id',
+        Category TEXT COMMENT '文本分类', -- 文本分类
         TextContent TEXT COMMENT '推理文本', -- MySQL中的text类型在SQLite中对应TEXT类型
         TextLanguage TEXT COMMENT '文本语种',
         CreateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- SQLite中默认值可以直接设置

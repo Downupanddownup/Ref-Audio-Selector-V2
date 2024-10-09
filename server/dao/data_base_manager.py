@@ -20,17 +20,21 @@ class DatabaseConfig(metaclass=SingletonMeta):
         self.workspace = 'workspace'
         self.role_name = ''
         self.db_path = ''
+        self.db_master_path = 'master_database.db'
 
     def update_db_path(self, role_name: str):
         self.role_name = role_name
         self.db_path = f'{self.get_work_dir()}\\ref_audio_selector.db'
         init_table(self.db_path)
-    
+
     def get_work_dir(self) -> str:
         work_dir = f'{self.workspace}\\{self.role_name}'
         if not os.path.exists(work_dir):
             os.makedirs(work_dir)
         return work_dir
+
+    def get_master_db_path(self) -> str:
+        return self.db_master_path
 
 
 # 读取配置文件
@@ -38,8 +42,11 @@ db_config = DatabaseConfig()
 
 
 class DatabaseConnection:
-    def __init__(self):
-        self.db_path = db_config.db_path
+    def __init__(self, db_path: str = None):
+        if db_path is not None:
+            self.db_path = db_path
+        else:
+            self.db_path = db_config.db_path
         self.connection = None
 
     def __enter__(self):
@@ -56,15 +63,16 @@ class SQLExecutor:
         pass
 
     @staticmethod
-    def execute_query(query: str, parameters: tuple = ()) -> List[Dict]:
+    def execute_query(data_base_path: str, query: str, parameters: tuple = ()) -> List[Dict]:
         """
         执行 SQL 查询并返回查询结果和列名。
 
+        :param data_base_path: 
         :param query: SQL 查询语句。
         :param parameters: SQL 查询参数（可选）。
         :return: 查询结果列表，每个元素是一个包含列名和值的字典。
         """
-        with DatabaseConnection() as connection:
+        with DatabaseConnection(data_base_path) as connection:
             cursor = connection.cursor()
             cursor.execute(query, parameters)
 
@@ -78,18 +86,18 @@ class SQLExecutor:
             results = [dict(zip(column_names, record)) for record in records]
 
             return results
-        pass
 
     @staticmethod
-    def get_count(query: str, parameters: tuple = ()) -> int:
+    def get_count(data_base_path: str, query: str, parameters: tuple = ()) -> int:
         """
         执行 SQL 查询并返回查询结果和列名。
 
+        :param data_base_path: 
         :param query: SQL 查询语句。
         :param parameters: SQL 查询参数（可选）。
         :return: 查询结果列表，每个元素是一个包含列名和值的字典。
         """
-        with DatabaseConnection() as connection:
+        with DatabaseConnection(data_base_path) as connection:
             cursor = connection.cursor()
             cursor.execute(query, parameters)
 
@@ -97,15 +105,16 @@ class SQLExecutor:
             return cursor.fetchone()[0]
 
     @staticmethod
-    def execute_update(query: str, parameters: tuple = ()) -> int:
+    def execute_update(data_base_path: str, query: str, parameters: tuple = ()) -> int:
         """
         执行 SQL 更新（如插入、更新或删除）。
 
+        :param data_base_path: 
         :param query: SQL 更新语句。
         :param parameters: SQL 更新语句的参数（可选）。
         :return: 影响的行数。
         """
-        with DatabaseConnection() as connection:
+        with DatabaseConnection(data_base_path) as connection:
             cursor = connection.cursor()
             rows_affected = cursor.execute(query, parameters).rowcount
             # 提交事务
@@ -113,33 +122,34 @@ class SQLExecutor:
             return rows_affected
 
     @staticmethod
-    def insert(query: str, parameters: tuple = ()) -> int:
+    def insert(data_base_path: str, query: str, parameters: tuple = ()) -> int:
         """
         执行 SQL 更新（如插入、更新或删除）。
 
+        :param data_base_path: 
         :param query: SQL 更新语句。
         :param parameters: SQL 更新语句的参数（可选）。
         :return: 影响的行数。
         """
-        with DatabaseConnection() as connection:
+        with DatabaseConnection(data_base_path) as connection:
             cursor = connection.cursor()
             inserted_id = cursor.execute(query, parameters).lastrowid
             # 提交事务
             connection.commit()
             return inserted_id
 
-
     @staticmethod
-    def batch_execute(query: str, parameters_list: List[tuple]) -> int:
+    def batch_execute(data_base_path: str, query: str, parameters_list: List[tuple]) -> int:
         """
         执行批量插入操作。
 
+        :param data_base_path: 
         :param query: SQL 插入语句。
         :param parameters_list: SQL 插入语句的参数列表。
         :return: 影响的行数。
         """
         affected_rows = 0
-        with DatabaseConnection() as connection:
+        with DatabaseConnection(data_base_path) as connection:
             cursor = connection.cursor()
             # 显式开始事务
             cursor.execute('BEGIN')
@@ -154,4 +164,47 @@ class SQLExecutor:
                 connection.rollback()
                 raise e
             return affected_rows
-        
+
+
+class DBSlaveSQLExecutor:
+    @staticmethod
+    def execute_query(query: str, parameters: tuple = ()) -> List[Dict]:
+        return SQLExecutor.execute_query(db_config.db_path, query, parameters)
+
+    @staticmethod
+    def get_count(query: str, parameters: tuple = ()) -> int:
+        return SQLExecutor.get_count(db_config.db_path, query, parameters)
+
+    @staticmethod
+    def execute_update(query: str, parameters: tuple = ()) -> int:
+        return SQLExecutor.execute_update(db_config.db_path, query, parameters)
+
+    @staticmethod
+    def insert(query: str, parameters: tuple = ()) -> int:
+        return SQLExecutor.insert(db_config.db_path, query, parameters)
+
+    @staticmethod
+    def batch_execute(query: str, parameters_list: List[tuple]) -> int:
+        return SQLExecutor.batch_execute(db_config.db_path, query, parameters_list)
+
+
+class DBMasterSQLExecutor:
+    @staticmethod
+    def execute_query(query: str, parameters: tuple = ()) -> List[Dict]:
+        return SQLExecutor.execute_query(db_config.db_master_path, query, parameters)
+
+    @staticmethod
+    def get_count(query: str, parameters: tuple = ()) -> int:
+        return SQLExecutor.get_count(db_config.db_master_path, query, parameters)
+
+    @staticmethod
+    def execute_update(query: str, parameters: tuple = ()) -> int:
+        return SQLExecutor.execute_update(db_config.db_master_path, query, parameters)
+
+    @staticmethod
+    def insert(query: str, parameters: tuple = ()) -> int:
+        return SQLExecutor.insert(db_config.db_master_path, query, parameters)
+
+    @staticmethod
+    def batch_execute(query: str, parameters_list: List[tuple]) -> int:
+        return SQLExecutor.batch_execute(db_config.db_master_path, query, parameters_list)

@@ -1,4 +1,6 @@
 from server.bean.base_model import BaseModel
+from server.common.filter import Filter
+from server.util.util import ValidationUtils
 
 
 class ObjInferenceTask(BaseModel):
@@ -35,3 +37,33 @@ class ObjInferenceTask(BaseModel):
                 f"InferenceStatus: {self.inference_status}, ExecuteTextSimilarity: {self.execute_text_similarity}, "
                 f"ExecuteAudioSimilarity: {self.execute_audio_similarity}, "
                 f"CreateTime: {self.create_time}")
+
+
+class ObjInferenceTaskFilter(Filter):
+    def __init__(self, form_data):
+        super().__init__(form_data)
+        self.id = form_data.get('id')
+        self.task_name = form_data.get('task_name')
+        self.compare_type = form_data.get('compare_type')
+        self.inference_status = form_data.get('inference_status')
+
+    def make_sql(self) -> []:
+        sql = ''
+        condition = []
+        if not ValidationUtils.is_empty(self.id):
+            sql += f" and id = ? "
+            condition.append(f"{self.id}")
+
+        if not ValidationUtils.is_empty(self.task_name):
+            sql += f" and task_name like ? "
+            condition.append(f"%{self.task_name}%")
+
+        if not ValidationUtils.is_empty(self.compare_type):
+            sql += f" and compare_type = ? "
+            condition.append(f"{self.compare_type}")
+
+        if not ValidationUtils.is_empty(self.inference_status):
+            sql += f" and inference_status = ? "
+            condition.append(f"{self.inference_status}")
+
+        return sql, tuple(condition)

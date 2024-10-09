@@ -1,6 +1,6 @@
 from server.bean.reference_audio.obj_reference_audio_compare_detail import ObjReferenceAudioCompareDetail
 from server.bean.reference_audio.obj_reference_audio_compare_task import ObjReferenceAudioCompareTask
-from server.dao.data_base_manager import SQLExecutor
+from server.dao.data_base_manager import DBSlaveSQLExecutor
 
 
 class ReferenceAudioCompareDao:
@@ -9,7 +9,7 @@ class ReferenceAudioCompareDao:
         sql = '''
             INSERT INTO tab_obj_reference_audio_compare_task(AudioId,CategoryName,Status,Remark,CreateTime) VALUES (?,?,?,?,datetime('now'))
             '''
-        return SQLExecutor.insert(sql, (
+        return DBSlaveSQLExecutor.insert(sql, (
             task.audio_id,
             task.category_name,
             task.status,
@@ -23,7 +23,7 @@ class ReferenceAudioCompareDao:
             SELECT * FROM tab_obj_reference_audio_compare_task where id = ? LIMIT 1
             '''
 
-        records = SQLExecutor.execute_query(select_sql, (task_id,))
+        records = DBSlaveSQLExecutor.execute_query(select_sql, (task_id,))
 
         task_list = []
 
@@ -45,7 +45,7 @@ class ReferenceAudioCompareDao:
         sql = '''
             UPDATE tab_obj_reference_audio_compare_task SET Status = ? WHERE Id = ?
             '''
-        return SQLExecutor.execute_update(sql, (
+        return DBSlaveSQLExecutor.execute_update(sql, (
             status,
             task_id
         ))
@@ -55,7 +55,7 @@ class ReferenceAudioCompareDao:
         sql = '''
             INSERT INTO tab_obj_reference_audio_compare_detail(TaskId,CompareAudioId,Score,CreateTime) VALUES (?,?,?,datetime('now'))
             '''
-        return SQLExecutor.batch_execute(sql, [(
+        return DBSlaveSQLExecutor.batch_execute(sql, [(
             x.task_id,
             x.compare_audio_id,
             x.score
@@ -68,7 +68,7 @@ class ReferenceAudioCompareDao:
             SELECT * FROM tab_obj_reference_audio_compare_task where AudioId = ? AND Status = 2 ORDER BY Id DESC LIMIT 1
             '''
 
-        records = SQLExecutor.execute_query(select_sql, (audio_id,))
+        records = DBSlaveSQLExecutor.execute_query(select_sql, (audio_id,))
 
         task_list = []
 
@@ -92,7 +92,7 @@ class ReferenceAudioCompareDao:
             SELECT * FROM tab_obj_reference_audio_compare_detail where TaskId = ? ORDER BY Score DESC
             '''
 
-        records = SQLExecutor.execute_query(select_sql, (task_id,))
+        records = DBSlaveSQLExecutor.execute_query(select_sql, (task_id,))
 
         task_list = []
 

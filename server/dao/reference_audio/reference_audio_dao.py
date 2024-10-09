@@ -1,7 +1,7 @@
 from typing import Dict
 
 from server.bean.reference_audio.obj_reference_audio import ObjReferenceAudio, ObjReferenceAudioFilter
-from server.dao.data_base_manager import DatabaseConnection, SQLExecutor
+from server.dao.data_base_manager import DatabaseConnection, DBSlaveSQLExecutor
 
 
 class ReferenceAudioDao:
@@ -16,7 +16,7 @@ class ReferenceAudioDao:
 
         select_sql += condition_sql
 
-        count = SQLExecutor.get_count(select_sql, condition)
+        count = DBSlaveSQLExecutor.get_count(select_sql, condition)
 
         return count
 
@@ -35,7 +35,7 @@ class ReferenceAudioDao:
 
         select_sql += audio_filter.get_limit_sql()
 
-        records = SQLExecutor.execute_query(select_sql, condition)
+        records = DBSlaveSQLExecutor.execute_query(select_sql, condition)
 
         list = []
 
@@ -56,7 +56,7 @@ class ReferenceAudioDao:
         sql = '''
         INSERT INTO tab_obj_reference_audio(AudioName,AudioPath,Content,Language,Category,AudioLength,ValidOrNot,CreateTime) VALUES (?,?,?,?,?,?,?,datetime('now'))
         '''
-        return SQLExecutor.batch_execute(sql, [(
+        return DBSlaveSQLExecutor.batch_execute(sql, [(
             x.audio_name,
             x.audio_path,
             x.content,
@@ -71,4 +71,4 @@ class ReferenceAudioDao:
         sql = f'''
         UPDATE tab_obj_reference_audio SET Category = ? WHERE Id IN ({change_audio_id_str})
         '''
-        return SQLExecutor.execute_update(sql, (target_category,))
+        return DBSlaveSQLExecutor.execute_update(sql, (target_category,))
