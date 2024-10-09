@@ -26,11 +26,24 @@ sys.argv.extend(["--gpt_path",
 from api import *
 
 
+@app.get("/status")
+async def status():
+    # 发送 SIGINT 信号给当前进程
+    return {"message": "server is running"}
+
+
 @app.get("/stop")
 async def stop_service():
     # 发送 SIGINT 信号给当前进程
     os.kill(os.getpid(), signal.SIGTERM)
-    return {"message": "Stopping the server..."}
+
+
+# 捕获 SIGTERM 信号并执行清理工作
+def handle_sigterm(signum, frame):
+    sys.exit()  # 退出进程以关闭 CMD 窗口
+
+
+signal.signal(signal.SIGTERM, handle_sigterm)
 
 
 @app.post("/ras")

@@ -1,3 +1,4 @@
+import time
 import webbrowser
 
 from fastapi import FastAPI, Request
@@ -6,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
 from server.common.custom_exception import CustomException
+from server.common.log_config import logger
+from server.common.ras_api_monitor import RasApiMonitor
 from server.common.response_result import ResponseResult
 from server.controller.reference_audio.reference_audio_controller import router as audio_router
 from server.controller.inference_task.inference_task_controller import router as task_router
@@ -33,6 +36,7 @@ async def custom_exception_handler(request: Request, exc: CustomException):
 # 注册默认的异常处理器
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
+    logger.error(exc)
     return ResponseResult(code=2, msg=exc.message)
 
 
@@ -53,4 +57,7 @@ if __name__ == "__main__":
     url = "http://localhost:8000/static/main.html"
     # webbrowser.open(url)
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # uvicorn.run(app, host="0.0.0.0", port=8000)
+    if RasApiMonitor.start_service():
+        time.sleep(1)  # 每隔一秒检查一次
+        RasApiMonitor.stop_service()

@@ -5,6 +5,7 @@ from server.bean.inference_task.obj_inference_task_audio import ObjInferenceTask
 from server.bean.inference_task.obj_inference_task_compare_params import ObjInferenceTaskCompareParams
 from server.bean.inference_task.obj_inference_task_text import ObjInferenceTaskText
 from server.bean.inference_task.obj_inference_text import ObjInferenceTextFilter, ObjInferenceText
+from server.common.custom_exception import CustomException
 from server.common.response_result import ResponseResult
 from server.service.inference_task.inference_task_service import InferenceTaskService
 from server.service.inference_task.inference_text_service import InferenceTextService
@@ -177,3 +178,13 @@ async def load_inference_task_detail(request: Request):
         "gpt_model_list": gpt_model_list,
         "vits_model_list": vits_model_list
     })
+
+
+@router.post("/start_execute_inference_task")
+async def start_execute_inference_task(request: Request):
+    form_data = await request.json()
+    task_id = str_to_int(form_data.get('task_id')),
+    if task_id < 0:
+        raise CustomException("task_id is invalid")
+
+    return ResponseResult(data={"result": result})
