@@ -103,7 +103,7 @@ def open_file(filepath):
         subprocess.run(['xdg-open', filepath])
 
 
-def str_to_int(input_str, default=None):
+def str_to_int(input_str, default: int=None) -> int:
     """
     将字符串转换为整数。
 

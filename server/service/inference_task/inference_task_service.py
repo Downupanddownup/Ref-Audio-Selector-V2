@@ -20,6 +20,7 @@ class InferenceTaskService:
 
     @staticmethod
     def add_inference_task(task: ObjInferenceTask) -> int:
+        InferenceTaskService.check_inference_task(task)
         if task.compare_type == 'refer_audio':
             reference_audio_list = ReferenceAudioService.find_list(ObjReferenceAudioFilter({
                 'category_list_str': ','.join(f'"{p.audio_category}"' for p in task.param_list)
@@ -81,3 +82,41 @@ class InferenceTaskService:
     @staticmethod
     def get_task_text_list_by_task_id(task_id: int) -> list[ObjInferenceTaskText]:
         return InferenceTaskDao.get_task_text_list_by_task_id(task_id)
+
+    @staticmethod
+    def save_inference_task(task: ObjInferenceTask) -> int:
+        if task.id < 1:
+            raise CustomException("任务id不能为空")
+        InferenceTaskService.check_inference_task(task)
+        if task.compare_type == 'refer_audio':
+            reference_audio_list = ReferenceAudioService.find_list(ObjReferenceAudioFilter({
+                'category_list_str': ','.join(f'"{p.audio_category}"' for p in task.param_list)
+            }))
+            task.audio_list = [ObjInferenceTaskAudio(
+                audio_id=audio.id,
+                audio_name=audio.audio_name,
+                audio_path=audio.audio_path,
+                audio_content=audio.content,
+                audio_language=audio.language
+            ) for audio in reference_audio_list]
+
+        task_id = task.id
+
+        result = InferenceTaskDao.update_inference_task(task)
+        if result < 1:
+            raise CustomException("修改推理任务失败")
+
+        InferenceTaskDao.delete_task_param_by_task_id(task_id)
+        InferenceTaskDao.delete_task_audio_by_task_id(task_id)
+        InferenceTaskDao.delete_task_text_by_task_id(task_id)
+
+        for param in task.param_list:
+            param.task_id = task_id
+        InferenceTaskDao.batch_insert_task_param(task.param_list)
+        for audio in task.audio_list:
+            audio.task_id = task_id
+        InferenceTaskDao.batch_insert_task_audio(task.audio_list)
+        for text in task.text_list:
+            text.task_id = task_id
+        InferenceTaskDao.batch_insert_task_text(task.text_list)
+        return result

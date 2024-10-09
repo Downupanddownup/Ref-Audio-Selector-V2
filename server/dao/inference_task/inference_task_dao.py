@@ -198,3 +198,62 @@ class InferenceTaskDao:
                 create_time=data.get('CreateTime')
             ))
         return record_list
+
+    @staticmethod
+    def update_inference_task(task: ObjInferenceTask) -> int:
+        sql = '''
+            UPDATE tab_obj_inference_task SET 
+            TaskName=?,
+            CompareType=?,
+            GptSovitsVersion=?,
+            GptModelName=?,
+            VitsModelName=?,
+            TopK=?,
+            TopP=?,
+            Temperature=?,
+            TextDelimiter=?,
+            Speed=?,
+            OtherParameters=?
+             WHERE Id = ? 
+            '''
+        return DBMasterSQLExecutor.execute_update(sql, (
+            task.task_name,
+            task.compare_type,
+            task.gpt_sovits_version,
+            task.gpt_model_name,
+            task.vits_model_name,
+            task.top_k,
+            task.top_p,
+            task.temperature,
+            task.text_delimiter,
+            task.speed,
+            task.other_parameters,
+            task.id
+        ))
+
+    @staticmethod
+    def delete_task_param_by_task_id(task_id: int) -> int:
+        sql = '''
+            DELETE FROM tab_obj_inference_task_compare_params WHERE TaskId = ?
+            '''
+        return DBMasterSQLExecutor.execute_update(sql, (
+            task_id,
+        ))
+
+    @staticmethod
+    def delete_task_audio_by_task_id(task_id: int) -> int:
+        sql = '''
+            DELETE FROM tab_obj_inference_task_audio WHERE TaskId = ?
+            '''
+        return DBMasterSQLExecutor.execute_update(sql, (
+            task_id,
+        ))
+
+    @staticmethod
+    def delete_task_text_by_task_id(task_id: int) -> int:
+        sql = '''
+            DELETE FROM tab_obj_inference_task_text WHERE TaskId = ?
+            '''
+        return DBMasterSQLExecutor.execute_update(sql, (
+            task_id,
+        ))

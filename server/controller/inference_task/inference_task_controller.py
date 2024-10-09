@@ -79,9 +79,7 @@ async def get_inference_task_list(request: Request):
     return ResponseResult(data=task_list, count=count)
 
 
-@router.post("/insert_inference_task")
-async def insert_inference_task(request: Request):
-    form_data = await request.json()
+def get_inference_task_from_json(form_data: dict) -> ObjInferenceTask:
     task = ObjInferenceTask(
         task_name=form_data.get('taskName'),
         compare_type=form_data.get('compareType'),
@@ -136,10 +134,29 @@ async def insert_inference_task(request: Request):
             other_parameters=param.get('otherParameters')
         ))
     task.param_list = task_param_list
+    return task
+
+
+@router.post("/insert_inference_task")
+async def insert_inference_task(request: Request):
+    form_data = await request.json()
+
+    task = get_inference_task_from_json(form_data)
 
     task_id = InferenceTaskService.add_inference_task(task)
 
     return ResponseResult(data={"task_id": task_id})
+
+
+@router.post("/save_inference_task")
+async def save_inference_task(request: Request):
+    form_data = await request.json()
+
+    task = get_inference_task_from_json(form_data)
+
+    result = InferenceTaskService.save_inference_task(task)
+
+    return ResponseResult(data={"result": result})
 
 
 @router.post("/load_inference_task_detail")
