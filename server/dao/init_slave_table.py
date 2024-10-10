@@ -133,6 +133,7 @@ def init_slave_table(db_path):
         CompareParamId INTEGER COMMENT '比对参数id',
         Path TEXT COMMENT '音频地址',
         AudioLength REAL COMMENT '时长',
+        Status INTEGER COMMENT '生成状态 1 成功；2 失败',
         AsrText TEXT COMMENT 'asr文本',
         AsrSimilarScore REAL COMMENT '文本相似度',
         AudioSimilarScore REAL COMMENT '音频相似度',

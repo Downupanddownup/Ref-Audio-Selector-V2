@@ -1,3 +1,5 @@
+import time
+
 from fastapi import APIRouter, Request
 
 from server.bean.inference_task.obj_inference_task import ObjInferenceTaskFilter, ObjInferenceTask
@@ -6,6 +8,7 @@ from server.bean.inference_task.obj_inference_task_compare_params import ObjInfe
 from server.bean.inference_task.obj_inference_task_text import ObjInferenceTaskText
 from server.bean.inference_task.obj_inference_text import ObjInferenceTextFilter, ObjInferenceText
 from server.common.custom_exception import CustomException
+from server.common.log_config import logger
 from server.common.response_result import ResponseResult
 from server.service.inference_task.inference_task_service import InferenceTaskService
 from server.service.inference_task.inference_text_service import InferenceTextService
@@ -186,5 +189,19 @@ async def start_execute_inference_task(request: Request):
     task_id = str_to_int(form_data.get('task_id')),
     if task_id < 0:
         raise CustomException("task_id is invalid")
+    task = InferenceTaskService.find_whole_inference_task_by_id(task_id)
+    if task is None:
+        raise CustomException("未找到task")
 
-    return ResponseResult(data={"result": result})
+    start_time = time.perf_counter()  # 使用 perf_counter 获取高精度计时起点
+
+    result_audio_list = InferenceTaskService.start_execute_inference_task(task)
+
+    end_time = time.perf_counter()  # 获取计时终点
+    elapsed_time = end_time - start_time  # 计算执行耗时
+
+    # 记录日志内容
+    log_message = f"执行耗时: {elapsed_time:.6f} 秒；推理数量: {len(result_audio_list)}"
+    logger.info(log_message)
+
+    return ResponseResult(data={"result": len(result_audio_list)})
