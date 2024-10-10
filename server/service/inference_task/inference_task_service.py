@@ -182,7 +182,7 @@ def create_task_cell_list_if_not_inference(task: ObjInferenceTask) -> list[TaskC
 
 def create_task_result_audio_list_if_not_inference(task: ObjInferenceTask) -> list[ObjInferenceTaskResultAudio]:
     task_result_audio_list = splicing_task_result_audio_list(task)
-    exists_task_result_audio_list = ResultEvaluationService.find_task_result_audio_list_by_task_id(task.id)
+    exists_task_result_audio_list = ResultEvaluationService.find_task_result_audio_list_by_task_id(task)
     not_exists_list = []
     for task_result_audio in task_result_audio_list:
         exists = False
@@ -194,7 +194,7 @@ def create_task_result_audio_list_if_not_inference(task: ObjInferenceTask) -> li
             not_exists_list.append(task_result_audio)
     ResultEvaluationService.batch_insert_task_result_audio(not_exists_list)
 
-    result_audio_list = ResultEvaluationService.find_task_result_audio_list_by_task_id(task.id)
+    result_audio_list = ResultEvaluationService.find_task_result_audio_list_by_task_id(task)
     return [audio for audio in result_audio_list if audio.status == 0]
 
 

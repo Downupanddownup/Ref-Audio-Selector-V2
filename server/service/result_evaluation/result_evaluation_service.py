@@ -1,13 +1,12 @@
+from server.bean.inference_task.obj_inference_task import ObjInferenceTask
 from server.bean.result_evaluation.obj_inference_task_result_audio import ObjInferenceTaskResultAudio
 from server.dao.result_evaluation.result_evaluation_dao import ResultEvaluationDao
-from server.service.inference_task.inference_task_service import InferenceTaskService
 
 
 class ResultEvaluationService:
     @staticmethod
-    def find_task_result_audio_list_by_task_id(task_id: int) -> list[ObjInferenceTaskResultAudio]:
-        task = InferenceTaskService.find_whole_inference_task_by_id(task_id)
-        result_audio_list = ResultEvaluationDao.find_task_result_audio_list_by_task_id(task_id)
+    def find_task_result_audio_list_by_task_id(task: ObjInferenceTask) -> list[ObjInferenceTaskResultAudio]:
+        result_audio_list = ResultEvaluationDao.find_task_result_audio_list_by_task_id(task.id)
         if task and result_audio_list:
             param_list = task.param_list
             audio_list = task.audio_list
