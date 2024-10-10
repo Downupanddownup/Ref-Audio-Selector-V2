@@ -67,8 +67,8 @@
           },
           // lineStyle: 'height: 50px;', // 定义表格的多行样式
           parseData: function(res){ //res 即为原始返回的数据
-            const list = res.data ? res.data.map(i => new C_ObjReferenceAudio(i)) : []
-            _this.audioList = list
+            const list = res.data ? res.data.map(i => new C_ObjInferenceText(i)) : []
+            _this.textList = list
             return {
               "code": res.code, //解析接口状态
               "msg": res.msg, //解析提示文本
@@ -77,34 +77,21 @@
             };
           },
           cols: [[
+            {field:'checkbox', width:'5%', title: '选择', type: 'checkbox'},
             {field:'index', width:'5%', title: '序号', type: 'numbers'},
-            {field:'audioName', width:'10%', title: '音频名称', templet: function(d){
-                return d.audioName;
-              }},
-            {field:'category', width:'8%', title: '音频分类', templet: function(d){
+            {field:'category', width:'10%', title: '文本分类', templet: function(d){
                 return d.category;
               }},
-            {field:'audioPlay', width:'20%', title: '音频播放', templet: function(d){
-                return ` 
-                                 <audio controls class="custom-audio" data-audio="${d.id}">
-                                    <source src="${d.audioPath}" type="audio/wav">
-                                    <!-- 提供备用内容，比如浏览器不支持<audio>标签时显示的信息 -->
-                                    您的浏览器不支持 HTML5 audio 标签。
-                                </audio>`
+            {field:'textContent', width:'50%', title: '文本内容', templet: function(d){
+                return d.textContent;
               }},
-            {field:'content', width:'20%', title: '音频内容', templet: function(d){
-                return `<div data-content-id="${d.id}" style="cursor: pointer">${d.content}</div>`;
-              }},
-            {field:'language', width:'8%', title: '音频语种', templet: function(d){
-                return d.language;
-              }},
-            {field:'audioLength', width:'8%', title: '音频时长', sort: true, templet: function(d){
-                return d.audioLength.toFixed(1);
+            {field:'textLanguage', width:'10%', title: '文本语种', templet: function(d){
+                return d.textLanguage;
               }},
             {field:'opt', width:'20%', title: '操作', templet: function(d){
                 const html = []
-                html.push(`<button type="button" class="layui-btn layui-btn-xs">切换分类</button>`)
-                html.push(`<button type="button" class="layui-btn layui-btn-xs" data-go-to-compare="${d.id}">开始比对</button>`)
+                html.push(`<button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>`)
+                html.push(`<button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>`)
                 return html.join(' ');
               }},
           ]],
@@ -122,11 +109,6 @@
                   audioController.dispatchClickEvent(audioElement)
                 }
               })
-            })
-
-            $('#' + _this.viewId + ' button[data-go-to-compare]').on('click', function(){
-              const id = $(this).attr('data-go-to-compare')
-              _this.goToCompare(id)
             })
 
           },
