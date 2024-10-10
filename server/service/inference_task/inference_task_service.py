@@ -1,7 +1,6 @@
 import numpy as np
 import time
 import os
-import requests
 import traceback
 import librosa
 
@@ -17,7 +16,6 @@ from server.bean.result_evaluation.obj_inference_task_result_audio import ObjInf
 from server.common.custom_exception import CustomException
 from server.common.log_config import logger, p_logger
 from server.common.ras_api_monitor import RasApiMonitor
-from server.dao.data_base_manager import db_config
 from server.dao.inference_task.inference_task_dao import InferenceTaskDao
 from server.service.inference_task.model_manager_service import ModelManagerService
 from server.service.reference_audio.reference_audio_service import ReferenceAudioService
@@ -147,9 +145,13 @@ class InferenceTaskService:
                     result = result and generate_audio_files_parallel(task_cell)
                 RasApiMonitor.stop_service()
                 if result:
-                    InferenceTaskService.change_inference_task_inference_status(2)
+                    InferenceTaskService.change_inference_task_inference_status(task.id, 2)
             else:
                 raise CustomException("RAS API 服务启动失败")
+
+    @staticmethod
+    def change_inference_task_inference_status(task_id, inference_status: int) -> int:
+        return InferenceTaskDao.change_inference_task_inference_status(task_id, inference_status)
 
 
 def create_task_cell_list_if_not_inference(task: ObjInferenceTask) -> list[TaskCell]:

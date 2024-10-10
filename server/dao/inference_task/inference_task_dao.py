@@ -257,3 +257,13 @@ class InferenceTaskDao:
         return DBMasterSQLExecutor.execute_update(sql, (
             task_id,
         ))
+
+    @staticmethod
+    def change_inference_task_inference_status(task_id, inference_status: int) -> int:
+        sql = '''
+            UPDATE tab_obj_inference_task SET InferenceStatus = ? WHERE TaskId = ?
+            '''
+        return DBMasterSQLExecutor.execute_update(sql, (
+            inference_status,
+            task_id
+        ))

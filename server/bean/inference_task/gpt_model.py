@@ -6,3 +6,6 @@ class GptModel(BaseModel):
         self.version = version
         self.name = name
         self.path = path
+
+    def equals(self, version, name):
+        return self.version == version and self.name == name
