@@ -1,3 +1,4 @@
+import os
 import time
 import webbrowser
 
@@ -58,6 +59,3 @@ if __name__ == "__main__":
     # webbrowser.open(url)
 
     # uvicorn.run(app, host="0.0.0.0", port=8000)
-    if RasApiMonitor.start_service():
-        time.sleep(1)  # 每隔一秒检查一次
-        RasApiMonitor.stop_service()

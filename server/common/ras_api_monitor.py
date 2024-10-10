@@ -2,7 +2,8 @@ import sys
 import time
 import requests
 from future.moves import subprocess
-from concurrent.futures import ThreadPoolExecutor
+
+from server.common.log_config import logger
 
 python_exec = sys.executable or "python"
 
@@ -13,18 +14,18 @@ class RasApiMonitor:
     def start_service() -> bool:
         try:
             startup_timeout = 60
-            process = start_new_service('server/api/ras_api.py')
+            service_process = _start_new_service('server/api/ras_api.py')
             end_time = time.time() + startup_timeout
             while time.time() < end_time:
                 if RasApiMonitor.check_service_status():
-                    print("Service started successfully.")
+                    logger.info("Service started successfully.")
                     return True
                 time.sleep(1)  # 每隔一秒检查一次
-            process.terminate()
-            print("Service did not start within the given timeout.")
+            service_process.terminate()
+            logger.error("Service did not start within the given timeout.")
             return False
         except Exception as e:
-            print(f"Error starting service: {e}")
+            logger.error(f"Error starting service: {e}")
             return False
 
     @staticmethod
@@ -36,11 +37,10 @@ class RasApiMonitor:
         :return: 如果服务在指定时间内响应，则返回 True，否则返回 False。
         """
         try:
-            response = _send_request('/status')
+            response = _send_request('/status', timeout)
             return response.status_code == 200
         except Exception as e:
             # 可能是超时或网络问题
-            print(f"Error checking service status: {e}")
             return False
 
     @staticmethod
@@ -54,11 +54,10 @@ class RasApiMonitor:
             _send_request('/stop')
             return not RasApiMonitor.check_service_status()
         except Exception as e:
-            print(f"Error stopping service: {e}")
-            return False
+            return not RasApiMonitor.check_service_status()
 
 
-def _send_request(endpoint: str) -> requests.Response:
+def _send_request(endpoint: str, timeout: int = 5) -> requests.Response:
     """
     发送 HTTP 请求到指定的端点。
 
@@ -67,15 +66,15 @@ def _send_request(endpoint: str) -> requests.Response:
     """
     base_url = "http://localhost:8001"
     url = f"{base_url}{endpoint}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=timeout)
     response.raise_for_status()
     return response
 
 
-def start_new_service(script_path):
+def _start_new_service(script_path: str) -> subprocess:
     # 对于Windows系统
     if sys.platform.startswith('win'):
-        cmd = f'start cmd /k {python_exec} {script_path}'
+        cmd = f'start cmd /c {python_exec} {script_path}'
     # 对于Mac或者Linux系统
     else:
         cmd = f'xterm -e {python_exec} {script_path}'

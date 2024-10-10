@@ -1,7 +1,7 @@
 import sys
 import os
 import signal
-import asyncio
+import subprocess
 import uvicorn
 
 # 获取当前脚本所在的绝对路径
@@ -36,14 +36,6 @@ async def status():
 async def stop_service():
     # 发送 SIGINT 信号给当前进程
     os.kill(os.getpid(), signal.SIGTERM)
-
-
-# 捕获 SIGTERM 信号并执行清理工作
-def handle_sigterm(signum, frame):
-    sys.exit()  # 退出进程以关闭 CMD 窗口
-
-
-signal.signal(signal.SIGTERM, handle_sigterm)
 
 
 @app.post("/ras")
@@ -81,4 +73,5 @@ async def tts_endpoint(
 
 
 if __name__ == "__main__":
+    print(f'ras_api的进程pid{os.getpid()}')
     uvicorn.run(app, host="0.0.0.0", port=8001, workers=1)
