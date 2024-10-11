@@ -29,41 +29,28 @@ async def get_inference_text_list(request: Request):
     return ResponseResult(data=text_list, count=count)
 
 
-@router.post("/insert_inference_text")
-async def insert_inference_text(request: Request):
-    form_data = await request.form()
-    text = ObjInferenceText(
-        category=form_data.get('category'),
-        text_content=form_data.get('text_content'),
-        text_language=form_data.get('text_language')
-    )
-
-    text_id = InferenceTextService.insert_inference_text(text)
-
-    return ResponseResult(data={"text_id": text_id})
-
-
-@router.post("/update_inference_text")
+@router.post("/save_inference_text")
 async def update_inference_text(request: Request):
     form_data = await request.form()
     text = ObjInferenceText(
-        id=str_to_int(form_data.get('text_id')),
+        id=str_to_int(form_data.get('id')),
         category=form_data.get('category'),
-        text_content=form_data.get('text_content'),
-        text_language=form_data.get('text_language')
+        text_content=form_data.get('textContent'),
+        text_language=form_data.get('textLanguage')
     )
-    if text.id < 1:
-        return ResponseResult(code=1, msg="text_id is invalid")
+    if text.id > 0:
+        InferenceTextService.update_inference_text_by_id(text)
+        text_id = text.id
+    else:
+        text_id = InferenceTextService.insert_inference_text(text)
 
-    result = InferenceTextService.update_inference_text_by_id(text)
-
-    return ResponseResult(data={"result": result})
+    return ResponseResult(data={"text_id": text_id})
 
 
 @router.post("/delete_inference_text")
 async def delete_inference_text(request: Request):
     form_data = await request.form()
-    text_id = str_to_int(form_data.get('text_id')),
+    text_id = str_to_int(form_data.get('text_id'))
     if text_id < 1:
         return ResponseResult(code=1, msg="text_id is invalid")
 

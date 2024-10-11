@@ -16,6 +16,10 @@
           const obj = $('#'+_this.viewId)
           obj.html(html)
           _this.listenTabSwitch()
+          
+          obj.find('#createText').on('click', function(){
+            _this.showEditTextDialog(0)
+          })
 
           layui.element.tabChange('textManagerTab', 1);
           
@@ -47,9 +51,10 @@
         const windowHeight = window.innerHeight;
         
         const header = $('#'+_this.viewId+' #textHeader').height()
+        const textListSearch = $('#'+_this.viewId+' #textListSearch').height()
         console.log('header',header)
 
-        const height = windowHeight * 0.95 *0.95 - header - 180
+        const height = windowHeight * 0.95 *0.95 - header - textListSearch - 200
         // 创建渲染实例
         layui.table.render({
           elem: '#textList',
@@ -109,6 +114,9 @@
                 $.customAjax({
                   url: BaseUrl+'task/delete_inference_text',
                   type: 'post',
+                  data:{
+                    text_id:id
+                  },
                   success: function(res){
                     if (res.code == 0) {
                       layui.layer.msg('删除成功')
@@ -134,32 +142,85 @@
       
       showEditTextDialog(textId){
         
-        const _this = this
+       
         
-        const obj_text = _this.textList.find(i => i.id == id)
+        const _this = this
 
-        layui.layer.open({
+        let obj_text = null
+        
+        if (textId > 0) {
+          obj_text = _this.textList.find(i => i.id == textId)
+        } else {
+          obj_text = new C_ObjInferenceText({})
+        }
+
+        console.log('obj_text',obj_text)
+        
+        const textDialogViewId = 'editTextDialog'
+
+        const dialogIndex = layui.layer.open({
           type: 1,
-          area: ['40%', '40%'],
-          content: `<div id="editTextDialog"></div>`,
+          area: ['800px', '450px'],
+          content: `<div id="${textDialogViewId}"></div>`,
           btn: ['确定', '取消'],
           yes: function(){
-
-            const _this = this
-            const getTpl = $('#textManagerTemplate').html(); // 获取模板字符
-            // 渲染并输出结果
-            layui.laytpl(getTpl).render(_this, function(html){
-              const obj = $('#'+_this.viewId)
-              obj.html(html)
-              _this.listenTabSwitch()
-
-              layui.element.tabChange('textManagerTab', 1);
-
-            });
-            return _this
-
+            const obj = $('#' + textDialogViewId)
+            
+            const textCategory = obj.find('#textCategory').val()
+            const textLanguage = obj.find('#textLanguage').val()
+            const textContent = obj.find('#textContent').val()
+            
+            if (!textCategory) {
+              layui.layer.alert('请输入分类')
+              return
+            }
+            
+            if (!textLanguage) {
+              layui.layer.alert('请选择语言')
+              return
+            }
+            
+            if (!textContent) {
+              layui.layer.alert('请输入文本')
+              return
+            }
+            
+            const submitText = new C_ObjInferenceText({
+              id: textId,
+              category:textCategory,
+              textLanguage:textLanguage,
+              textContent:textContent
+            })
+            
+            $.customAjax({
+              url: BaseUrl+'task/save_inference_text',
+              type: 'post',
+              data:submitText,
+              dataType:'json',
+              success: function(res){
+                if (res.code == 0) {
+                  layui.layer.close(dialogIndex)
+                  layui.layer.msg('保存成功')
+                  refreshListData('textList')
+                } else {
+                  layui.layer.msg(res.msg)
+                }
+              },
+              error: function(res, msg){
+                layui.layer.msg(msg)
+              }
+            })
           }
         });
+
+        const getTpl = $('#textEditTemplate').html(); // 获取模板字符
+        // 渲染并输出结果
+        layui.laytpl(getTpl).render(obj_text, function(html){
+          const obj = $('#'+textDialogViewId)
+          obj.html(html)
+
+        });
+        
       }
       
       loadSelectedTextList(){
@@ -271,6 +332,30 @@
     </ul>
     <div class="layui-tab-content">
       <div class="layui-tab-item layui-show">
+
+        <table class="table3" id="textListSearch">
+          <tr>
+            <td>文本分类：</td>
+            <td><input type="text" autocomplete="off" id="searchTextCategory" placeholder="文本分类" class="layui-input" style="width: auto;"></td>
+            <td>文本语种：</td>
+            <td>
+              <select class="customSelect" id="searchTextLanguage">
+                <option value="">请选择</option>
+                <option value="refer_audio">参考音频</option>
+                <option value="speed">speed值</option>
+                <option value="text_delimiter">文本分隔符</option>
+                <option value="other">其余参数</option>
+              </select>
+            </td>
+            <td>文本内容：</td>
+            <td><input type="text" autocomplete="off" id="searchTextContent" placeholder="文本内容" class="layui-input" style="width: auto;"></td>
+            <td colspan="2">
+              <button type="submit" class="layui-btn layui-btn-sm" id="searchText">搜索</button>
+              <button type="submit" class="layui-btn layui-btn-sm" id="createText">新建文本</button>
+            </td>
+          </tr>
+        </table>
+        
         <table class="layui-hide" id="textList" lay-filter="textList" style="height: 100%"></table>
       </div>
       <div class="layui-tab-item">
@@ -286,8 +371,10 @@
       <td>分类：</td>
       <td>
         <input type="text" autoComplete="off" id="textCategory" placeholder="文本分类" class="layui-input"
-                 style="width: auto;"/>
+                 style="width: auto;" value="{{d.category}}"/>
       </td>
+    </tr>
+    <tr>
       <td>语种：</td>
       <td>
         <select class="customSelect" id="textLanguage">
@@ -297,9 +384,11 @@
           <option value="2">已完成</option>
         </select>
       </td>
+    </tr>
+    <tr>
       <td>文本内容：</td>
       <td>
-        <textarea id="textContent" placeholder="文本内容" class="layui-textarea"></textarea>
+        <textarea id="textContent" placeholder="文本内容" class="layui-textarea">{{d.textContent}}</textarea>
       </td>
     </tr>
   </table>

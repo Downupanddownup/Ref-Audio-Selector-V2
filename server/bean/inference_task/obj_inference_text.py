@@ -1,8 +1,9 @@
+from server.bean.base_model import BaseModel
 from server.common.filter import Filter
 from server.util.util import ValidationUtils
 
 
-class ObjInferenceText:
+class ObjInferenceText(BaseModel):
     def __init__(self, id=None, category=None, text_content=None, text_language=None, create_time=None):
         self.id = id
         self.category = category  # 文本分类
