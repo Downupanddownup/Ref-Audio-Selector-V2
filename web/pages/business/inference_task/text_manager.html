@@ -53,7 +53,7 @@
         // 创建渲染实例
         layui.table.render({
           elem: '#textList',
-          url: BaseUrl+'audio/get_reference_audio_list', // 此处为静态模拟数据，实际使用时需换成真实接口
+          url: BaseUrl+'task/get_inference_text_list', // 此处为静态模拟数据，实际使用时需换成真实接口
           method: 'post',
           height: height, // 最大高度减去其他容器已占有的高度差
           // cellMinWidth: 80,
@@ -90,24 +90,37 @@
               }},
             {field:'opt', width:'20%', title: '操作', templet: function(d){
                 const html = []
-                html.push(`<button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>`)
-                html.push(`<button type="button" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>`)
+                html.push(`<button type="button" class="layui-btn layui-btn-sm" data-edit-text="${d.id}"><i class="layui-icon"></i></button>`)
+                html.push(`<button type="button" class="layui-btn layui-btn-sm" data-delete-text="${d.id}"><i class="layui-icon"></i></button>`)
                 return html.join(' ');
               }},
           ]],
           done: function(){
-            const audioElements = $('#'+_this.viewId+' audio.custom-audio');
-            // 创建 AudioController 实例并传入音频元素集合
-            const audioController = new AudioController(Array.from(audioElements));
-
-            $('#' + _this.viewId + ' div[data-content-id]').on('click', function() {
-              const audioId = $(this).attr('data-content-id')
-              _this.audioList.forEach(i => {
-                if (i.id == audioId) {
-                  const audioElement = $('#' + _this.viewId + ' audio[data-audio="' + audioId + '"]')[0]
-                  console.log('audioElement',audioElement)
-                  audioController.dispatchClickEvent(audioElement)
-                }
+            
+            const obj = $('#'+_this.viewId)
+            obj.find('button[data-edit-text]').on('click', function(){
+              const id = $(this).attr('data-edit-text')
+              _this.showEditTextDialog(id)
+            })
+            
+            obj.find('button[data-delete-text]').on('click', function(){
+              const id = $(this).attr('data-delete-text')
+              layui.layer.confirm('确定删除该文本？', function(){
+                $.customAjax({
+                  url: BaseUrl+'task/delete_inference_text',
+                  type: 'post',
+                  success: function(res){
+                    if (res.code == 0) {
+                      layui.layer.msg('删除成功')
+                      refreshListData('textList')
+                    } else {
+                      layui.layer.msg(res.msg)
+                    }
+                  },
+                  error: function(res, msg){
+                    layui.layer.msg(msg)
+                  }
+                })
               })
             })
 
@@ -118,6 +131,37 @@
         });
         
       }
+      
+      showEditTextDialog(textId){
+        
+        const _this = this
+        
+        const obj_text = _this.textList.find(i => i.id == id)
+
+        layui.layer.open({
+          type: 1,
+          area: ['40%', '40%'],
+          content: `<div id="editTextDialog"></div>`,
+          btn: ['确定', '取消'],
+          yes: function(){
+
+            const _this = this
+            const getTpl = $('#textManagerTemplate').html(); // 获取模板字符
+            // 渲染并输出结果
+            layui.laytpl(getTpl).render(_this, function(html){
+              const obj = $('#'+_this.viewId)
+              obj.html(html)
+              _this.listenTabSwitch()
+
+              layui.element.tabChange('textManagerTab', 1);
+
+            });
+            return _this
+
+          }
+        });
+      }
+      
       loadSelectedTextList(){
         const _this = this
 
@@ -234,4 +278,29 @@
       </div>
     </div>
   </div>
+</script>
+
+<script id="textEditTemplate" type="text/html">
+  <table class="table1">
+    <tr>
+      <td>分类：</td>
+      <td>
+        <input type="text" autoComplete="off" id="textCategory" placeholder="文本分类" class="layui-input"
+                 style="width: auto;"/>
+      </td>
+      <td>语种：</td>
+      <td>
+        <select class="customSelect" id="textLanguage">
+          <option value="ZH">ZH</option>
+          <option value="0">待推理</option>
+          <option value="1">部分推理</option>
+          <option value="2">已完成</option>
+        </select>
+      </td>
+      <td>文本内容：</td>
+      <td>
+        <textarea id="textContent" placeholder="文本内容" class="layui-textarea"></textarea>
+      </td>
+    </tr>
+  </table>
 </script>

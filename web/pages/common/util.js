@@ -49,3 +49,11 @@ class AudioController {
 function isTrue(condition, ifTrue, ifFalse) {
     return condition ? ifTrue : ifFalse;
 }
+
+function refreshListData(listId){
+    // 数据重载 - 仅与数据相关的属性(options)能参与到重载中
+    layui.table.reloadData(listId, {
+        // where: {}, // 数据异步请求时携带的字段集 --- 属性设置有效，因属于数据相关属性
+        scrollPos: true, // 设定重载数据或切换分页时的滚动条的位置状态 --- 属性设置有效
+    });
+}
