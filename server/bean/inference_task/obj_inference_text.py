@@ -32,7 +32,7 @@ class ObjInferenceTextFilter(Filter):
             sql += f" and id = ? "
             condition.append(f"{self.id}")
         if not ValidationUtils.is_empty(self.text_content):
-            sql += f" and text_content like ? "
+            sql += f" and TextContent like ? "
             condition.append(f"%{self.text_content}%")
 
         if not ValidationUtils.is_empty(self.category):
@@ -40,7 +40,7 @@ class ObjInferenceTextFilter(Filter):
             condition.append(f"{self.category}")
 
         if not ValidationUtils.is_empty(self.text_language):
-            sql += f" and text_language = ? "
+            sql += f" and TextLanguage = ? "
             condition.append(f"{self.text_language}")
 
         return sql, tuple(condition)

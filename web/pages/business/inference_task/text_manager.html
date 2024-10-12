@@ -20,6 +20,10 @@
           obj.find('#createText').on('click', function(){
             _this.showEditTextDialog(0)
           })
+          
+          obj.find('#searchText').on('click', function(){
+            _this.reloadTextList()
+          })
 
           layui.element.tabChange('textManagerTab', 1);
           
@@ -44,6 +48,25 @@
 
         });
       }
+
+      getSearchParams(){
+        const _this = this
+        const obj = $('#'+_this.viewId)
+        const searchTextCategory = obj.find('#searchTextCategory').val()
+        const searchTextLanguage = obj.find('#searchTextLanguage').val()
+        const searchTextContent = obj.find('#searchTextContent').val()
+        return {
+          category: searchTextCategory,
+          text_content: searchTextContent,
+          text_language: searchTextLanguage
+        }
+      }
+      
+      reloadTextList() {
+        const _this = this
+        const params = _this.getSearchParams()
+        reloadListDataBySearchParams('textList',params)
+      }
       
       loadTextList(){
         const _this = this
@@ -55,6 +78,8 @@
         console.log('header',header)
 
         const height = windowHeight * 0.95 *0.95 - header - textListSearch - 200
+        
+        const params = _this.getSearchParams()
         // 创建渲染实例
         layui.table.render({
           elem: '#textList',
@@ -62,6 +87,7 @@
           method: 'post',
           height: height, // 最大高度减去其他容器已占有的高度差
           // cellMinWidth: 80,
+          where:params,
           page: true,
           limit:50,
           limits:[50,100,150,200],
@@ -74,6 +100,14 @@
           parseData: function(res){ //res 即为原始返回的数据
             const list = res.data ? res.data.map(i => new C_ObjInferenceText(i)) : []
             _this.textList = list
+            list.forEach(i => {
+              if (_this.selectedTextList.find(j => j.id == i.id)) {
+                i.LAY_CHECKED = true
+              } else {
+                i.LAY_CHECKED = false
+              }
+            })
+            
             return {
               "code": res.code, //解析接口状态
               "msg": res.msg, //解析提示文本
@@ -136,6 +170,32 @@
           error: function(res, msg){
             console.log(res, msg)
           }
+        });
+
+        // 复选框事件
+        layui.table.on('checkbox(textList)', function(obj){
+          console.log(obj); // 查看对象所有成员
+          console.log(obj.checked); // 当前是否选中状态
+          console.log(obj.data); // 选中行的相关数据
+          console.log(obj.type); // 若触发的是全选，则为：all；若触发的是单选，则为：one
+          
+          if (obj.type == 'one') {
+            const id = obj.data.id
+            if(obj.checked) {
+              _this.selectedTextList.push(new C_ObjInferenceText(obj.data))
+            } else {
+              _this.selectedTextList = _this.selectedTextList.filter(i => i.id != id)
+            }
+          } else if (obj.type == 'all') {
+            _this.textList.forEach(text => {
+              if (!_this.selectedTextList.find(i => i.id == text.id)) {
+                _this.selectedTextList.push(text)
+              }
+            })
+          }
+          
+          $('#' + _this.viewId + ' #selectedTextCount').html(_this.selectedTextList.length)
+          
         });
         
       }
@@ -235,75 +295,38 @@
         // 创建渲染实例
         layui.table.render({
           elem: '#selectedTextList',
-          url: BaseUrl+'audio/get_reference_audio_list', // 此处为静态模拟数据，实际使用时需换成真实接口
-          method: 'post',
           height: height, // 最大高度减去其他容器已占有的高度差
-          // cellMinWidth: 80,
+          data: _this.selectedTextList,
           page: false,
-          // lineStyle: 'height: 50px;', // 定义表格的多行样式
-          parseData: function(res){ //res 即为原始返回的数据
-            const list = res.data ? res.data.map(i => new C_ObjReferenceAudio(i)) : []
-            _this.audioList = list
-            return {
-              "code": res.code, //解析接口状态
-              "msg": res.msg, //解析提示文本
-              "count": res.count, //解析数据长度
-              "data": list //解析数据列表
-            };
-          },
           cols: [[
             {field:'index', width:'5%', title: '序号', type: 'numbers'},
-            {field:'audioName', width:'10%', title: '音频名称', templet: function(d){
-                return d.audioName;
-              }},
-            {field:'category', width:'8%', title: '音频分类', templet: function(d){
+            {field:'category', width:'10%', title: '文本分类', templet: function(d){
                 return d.category;
               }},
-            {field:'audioPlay', width:'20%', title: '音频播放', templet: function(d){
-                return ` 
-                                 <audio controls class="custom-audio" data-audio="${d.id}">
-                                    <source src="${d.audioPath}" type="audio/wav">
-                                    <!-- 提供备用内容，比如浏览器不支持<audio>标签时显示的信息 -->
-                                    您的浏览器不支持 HTML5 audio 标签。
-                                </audio>`
+            {field:'textContent', width:'50%', title: '文本内容', templet: function(d){
+                return d.textContent;
               }},
-            {field:'content', width:'20%', title: '音频内容', templet: function(d){
-                return `<div data-content-id="${d.id}" style="cursor: pointer">${d.content}</div>`;
-              }},
-            {field:'language', width:'8%', title: '音频语种', templet: function(d){
-                return d.language;
-              }},
-            {field:'audioLength', width:'8%', title: '音频时长', sort: true, templet: function(d){
-                return d.audioLength.toFixed(1);
+            {field:'textLanguage', width:'10%', title: '文本语种', templet: function(d){
+                return d.textLanguage;
               }},
             {field:'opt', width:'20%', title: '操作', templet: function(d){
                 const html = []
-                html.push(`<button type="button" class="layui-btn layui-btn-xs">切换分类</button>`)
-                html.push(`<button type="button" class="layui-btn layui-btn-xs" data-go-to-compare="${d.id}">开始比对</button>`)
+                html.push(`<button type="button" class="layui-btn layui-btn-sm" data-remove-text="${d.id}"><i class="layui-icon"></i></button>`)
                 return html.join(' ');
               }},
           ]],
           done: function(){
-            const audioElements = $('#'+_this.viewId+' audio.custom-audio');
-            // 创建 AudioController 实例并传入音频元素集合
-            const audioController = new AudioController(Array.from(audioElements));
+            const obj = $('#'+_this.viewId)
+            obj.find('button[data-remove-text]').on('click', function(){
+              const id = $(this).attr('data-remove-text')
 
-            $('#' + _this.viewId + ' div[data-content-id]').on('click', function() {
-              const audioId = $(this).attr('data-content-id')
-              _this.audioList.forEach(i => {
-                if (i.id == audioId) {
-                  const audioElement = $('#' + _this.viewId + ' audio[data-audio="' + audioId + '"]')[0]
-                  console.log('audioElement',audioElement)
-                  audioController.dispatchClickEvent(audioElement)
-                }
-              })
+              _this.selectedTextList = _this.selectedTextList.filter(i => i.id != id)
+
+              $('#' + _this.viewId + ' #selectedTextCount').html(_this.selectedTextList.length)
+
+              _this.loadSelectedTextList()
+            
             })
-
-            $('#' + _this.viewId + ' button[data-go-to-compare]').on('click', function(){
-              const id = $(this).attr('data-go-to-compare')
-              _this.goToCompare(id)
-            })
-
           },
           error: function(res, msg){
             console.log(res, msg)
@@ -328,7 +351,7 @@
   <div class="layui-tab layui-tab-brief" lay-filter="textManagerTab" style="padding: 10px">
     <ul class="layui-tab-title" id="textHeader">
       <li class="layui-this" lay-id="1">候选列表</li>
-      <li lay-id="2">已选中</li>
+      <li lay-id="2">已选中（<span id="selectedTextCount">0</span>）</li>
     </ul>
     <div class="layui-tab-content">
       <div class="layui-tab-item layui-show">

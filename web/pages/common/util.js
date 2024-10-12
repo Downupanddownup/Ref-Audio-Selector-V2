@@ -57,3 +57,11 @@ function refreshListData(listId){
         scrollPos: true, // 设定重载数据或切换分页时的滚动条的位置状态 --- 属性设置有效
     });
 }
+
+function reloadListDataBySearchParams(listId,params){
+    // 数据重载 - 仅与数据相关的属性(options)能参与到重载中
+    layui.table.reloadData(listId, {
+        where: params, // 数据异步请求时携带的字段集 --- 属性设置有效，因属于数据相关属性
+        scrollPos: true, // 设定重载数据或切换分页时的滚动条的位置状态 --- 属性设置有效
+    });
+}
