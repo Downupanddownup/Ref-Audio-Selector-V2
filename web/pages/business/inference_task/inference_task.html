@@ -18,7 +18,30 @@
                     obj.find('#createInferenceTask').on('click', function(){
                         _this.openCreateInferenceTask()
                     })
+                    
+                    obj.find('#searchTask').on('click', function(){
+                        _this.reloadInferenceTaskList()
+                    })
                 });
+            }
+
+            getSearchParams(){
+                const _this = this
+                const obj = $('#'+_this.viewId)
+                const searchTaskName = obj.find('#searchTaskName').val()
+                const searchCompareType = obj.find('#searchCompareType').val()
+                const searchInferenceStatus = obj.find('#searchInferenceStatus').val()
+                return {
+                    task_name: searchTaskName,
+                    compare_type: searchCompareType,
+                    inference_status: searchInferenceStatus
+                }
+            }
+
+            reloadInferenceTaskList() {
+                const _this = this
+                const params = _this.getSearchParams()
+                reloadListDataBySearchParams('inferenceTaskList',params)
             }
 
             loadInferenceTaskList(){
@@ -26,9 +49,10 @@
                 // 创建渲染实例
                 layui.table.render({
                     elem: '#inferenceTaskList',
-                    url: '/static/json/2/table/demo1.json', // 此处为静态模拟数据，实际使用时需换成真实接口
+                    url: BaseUrl + 'task/get_inference_task_list', // 此处为静态模拟数据，实际使用时需换成真实接口
                     height: height, // 最大高度减去其他容器已占有的高度差
-                    cellMinWidth: 80,
+                    method: 'post',
+                    // cellMinWidth: 80,
                     page: true,
                     cols: [[
                         {field:'index', width:'5%', title: '序号', type: 'numbers'},
@@ -145,10 +169,10 @@
     <table class="table3">
         <tr>
             <td>任务名称：</td>
-            <td><input type="text" autocomplete="off" id="taskName" placeholder="任务名称" class="layui-input" style="width: auto;"></td>
+            <td><input type="text" autocomplete="off" id="searchTaskName" placeholder="任务名称" class="layui-input" style="width: auto;"></td>
             <td>变量类型：</td>
             <td>
-                <select class="customSelect" id="compareType">
+                <select class="customSelect" id="searchCompareType">
                     <option value="">请选择</option>
                     <option value="refer_audio">参考音频</option>
                     <option value="gpt_model">GPT模型</option>
@@ -163,7 +187,7 @@
             </td>
             <td>推理状态：</td>
             <td>
-                <select class="customSelect" id="inferenceStatus">
+                <select class="customSelect" id="searchInferenceStatus">
                     <option value="-1">请选择</option>
                     <option value="0">待推理</option>
                     <option value="1">部分推理</option>

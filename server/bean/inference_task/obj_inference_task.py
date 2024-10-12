@@ -63,15 +63,15 @@ class ObjInferenceTaskFilter(Filter):
             condition.append(f"{self.id}")
 
         if not ValidationUtils.is_empty(self.task_name):
-            sql += f" and task_name like ? "
+            sql += f" and TaskName like ? "
             condition.append(f"%{self.task_name}%")
 
         if not ValidationUtils.is_empty(self.compare_type):
-            sql += f" and compare_type = ? "
+            sql += f" and CompareType = ? "
             condition.append(f"{self.compare_type}")
 
         if not ValidationUtils.is_empty(self.inference_status):
-            sql += f" and inference_status = ? "
+            sql += f" and InferenceStatus = ? "
             condition.append(f"{self.inference_status}")
 
         return sql, tuple(condition)
