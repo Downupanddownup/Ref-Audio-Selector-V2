@@ -207,8 +207,8 @@
           content: `<div id="audioSelectView"></div>`,
           btn: ['确定', '取消'],
           yes: function(){
-            const selectedTextList = C_ReferenceSelect$1.getAllSelectedAudioList()
-            _this.task.taskTextList = selectedTextList.map(data => {
+            const selectedAudioList = C_ReferenceSelect$1.getAllSelectedAudioList()
+            _this.task.taskAudioList = selectedAudioList.map(data => {
               return new C_ObjInferenceTaskAudio({
                 audioId:data.id, // id
                 audioName:data.audioName, // 音频名称
@@ -220,7 +220,7 @@
               })
             })
             layui.layer.close(dialogId)
-            _this.render()
+            $('#' + _this.viewId + ' #audioSelectedCount').html(_this.task.taskAudioList.length)
           }
         });
 
@@ -256,7 +256,7 @@
               })
             })
             layui.layer.close(dialogId)
-            _this.render()
+            $('#' + _this.viewId + ' #textManagerSelectedCount').html(_this.task.taskTextList.length)
           }
         });
        
@@ -501,27 +501,44 @@
             GPT 模型：
           </td>
           <td>
-            <select class="customSelect" id="gptModel">
-              {{# layui.each(d.gptModels, function(index, item){ }}
-                {{# if (d.task.gptSovitsVersion == item.version) { }}
-                  <option {{isTrue(item.name==d.task.gptModelName,'selected','')}} value="{{item.name}}">{{item.name}}</option>
-                {{# } }}
-              {{# }) }}
-            </select>
-            <button type="button" class="layui-btn layui-btn-sm">刷新</button>
+            
+            {{# if (d.task.compareType == 'gpt_model') { }}
+              已作为对比变量
+            {{# } else { }}
+
+                <select class="customSelect" id="gptModel">
+                  {{# layui.each(d.gptModels, function(index, item){ }}
+                    {{# if (d.task.gptSovitsVersion == item.version) { }}
+                      <option {{isTrue(item.name==d.task.gptModelName,'selected','')}} value="{{item.name}}">{{item.name}}</option>
+                    {{# } }}
+                  {{# }) }}
+                </select>
+                <button type="button" class="layui-btn layui-btn-sm">刷新</button>  
+            
+            {{# } }}
+            
+
           </td>
           <td>
             Vits 模型：
           </td>
           <td>
-            <select class="customSelect" id="vitsModel">
-              {{# layui.each(d.vitsModels, function(index, item){ }}
-                {{# if (d.task.gptSovitsVersion == item.version) { }}
-                  <option {{isTrue(item.name==d.task.vitsModelName,'selected','')}} value="{{item.name}}">{{item.name}}</option>
-                {{# } }}
-              {{# }) }}
-            </select>
-            <button type="button" class="layui-btn layui-btn-sm">刷新</button>
+
+            {{# if (d.task.compareType == 'vits_model') { }}
+            已作为对比变量
+            {{# } else { }}
+
+              <select class="customSelect" id="vitsModel">
+                {{# layui.each(d.vitsModels, function(index, item){ }}
+                  {{# if (d.task.gptSovitsVersion == item.version) { }}
+                    <option {{isTrue(item.name==d.task.vitsModelName,'selected','')}} value="{{item.name}}">{{item.name}}</option>
+                  {{# } }}
+                {{# }) }}
+              </select>
+              <button type="button" class="layui-btn layui-btn-sm">刷新</button>
+
+            {{# } }}
+            
           </td>
         </tr>
         <tr>
@@ -529,19 +546,40 @@
             top_k值：
           </td>
           <td>
-            <input type="number" autocomplete="off" id="topK" placeholder="top_k值" class="layui-input" style="width: auto;" value="{{d.task.topK}}">
+
+            {{# if (d.task.compareType == 'top_k') { }}
+            已作为对比变量
+            {{# } else { }}
+
+              <input type="number" autocomplete="off" id="topK" placeholder="top_k值" class="layui-input" style="width: auto;" value="{{d.task.topK}}">
+
+            {{# } }}
           </td>
           <td>
             top_p值：
           </td>
           <td>
-            <input type="number" autocomplete="off" id="topP" placeholder="top_p值" class="layui-input" style="width: auto;" value="{{d.task.topP}}">
+
+            {{# if (d.task.compareType == 'top_p') { }}
+            已作为对比变量
+            {{# } else { }}
+
+              <input type="number" autocomplete="off" id="topP" placeholder="top_p值" class="layui-input" style="width: auto;" value="{{d.task.topP}}">
+
+            {{# } }}
           </td>
           <td>
             temperature值：
           </td>
           <td>
-            <input type="number" autocomplete="off" id="temperature" placeholder="temperature值" class="layui-input" style="width: auto;" value="{{d.task.temperature}}">
+
+            {{# if (d.task.compareType == 'temperature') { }}
+            已作为对比变量
+            {{# } else { }}
+
+              <input type="number" autocomplete="off" id="temperature" placeholder="temperature值" class="layui-input" style="width: auto;" value="{{d.task.temperature}}">
+
+            {{# } }}
           </td>
         </tr>
         <tr>
@@ -549,30 +587,59 @@
             文本分隔符：
           </td>
           <td>
-            <input type="text" autocomplete="off" id="textDelimiter" placeholder="文本分隔符" class="layui-input" style="width: auto;" value="{{d.task.textDelimiter}}">
+
+            {{# if (d.task.compareType == 'text_delimiter') { }}
+            已作为对比变量
+            {{# } else { }}
+
+              <input type="text" autocomplete="off" id="textDelimiter" placeholder="文本分隔符" class="layui-input" style="width: auto;" value="{{d.task.textDelimiter}}">
+
+            {{# } }}
           </td>
           <td>
             speed值：
           </td>
           <td>
-            <input type="number" autocomplete="off" id="speed" placeholder="speed值" class="layui-input" style="width: auto;" value="{{d.task.speed}}">
+
+            {{# if (d.task.compareType == 'speed') { }}
+            已作为对比变量
+            {{# } else { }}
+
+              <input type="number" autocomplete="off" id="speed" placeholder="speed值" class="layui-input" style="width: auto;" value="{{d.task.speed}}">
+
+            {{# } }}
           </td>
           <td>
             其余参数：
           </td>
           <td>
-            <input type="text" autocomplete="off" id="other" placeholder="其余参数" class="layui-input" style="width: auto;" value="{{d.task.otherParameters}}">
+
+            {{# if (d.task.compareType == 'other') { }}
+            已作为对比变量
+            {{# } else { }}
+
+              <input type="text" autocomplete="off" id="other" placeholder="其余参数" class="layui-input" style="width: auto;" value="{{d.task.otherParameters}}">
+
+            {{# } }}
           </td>
         </tr>
         <tr>
           <td>参考音频：</td>
           <td>
-            已选中待推理音频数量：0
-            <button type="button" class="layui-btn layui-btn-sm" id="audioSelect">音频选择</button>
+
+            {{# if (d.task.compareType == 'refer_audio') { }}
+            已作为对比变量
+            {{# } else { }}
+
+                已选中待推理音频数量：<span id="audioSelectedCount">{{d.task.taskAudioList.length}}</span>
+                <button type="button" class="layui-btn layui-btn-sm" id="audioSelect">音频选择</button>
+
+            {{# } }}
+
           </td>
           <td>推理文本：</td>
           <td colspan="3">
-            已选中待推理文本数量：0
+            已选中待推理文本数量：<span id="textManagerSelectedCount">{{d.task.taskTextList.length}}</span>
             <button type="button" class="layui-btn layui-btn-sm" id="textManager">文本管理</button>
           </td>
         </tr>
@@ -581,19 +648,6 @@
       </div>
     </div>
   </div>
-  
-
-  <fieldset class="layui-elem-field layui-field-title">
-    <legend>请求地址</legend>
-  </fieldset>
-  
-  <table class="table1">
-    <tr>
-      <td>
-        <input type="text" autocomplete="off" placeholder="其余参数" class="layui-input" style="width: 100%;" disabled value="http://localhost:63342/Ref-Audio-Selector-V2/main.html?_ijt=8ie38tk5kmm54s6uc5rhfcbctk&_ij_reload=RELOAD_ON_SAVE">
-      </td>
-    </tr>
-  </table>
 
   {{# } }}
   
