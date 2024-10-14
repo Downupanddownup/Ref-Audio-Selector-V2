@@ -16,7 +16,7 @@
                     _this.loadInferenceTaskList()
                     
                     obj.find('#createInferenceTask').on('click', function(){
-                        _this.openCreateInferenceTask()
+                        _this.openEditInferenceTask(0)
                     })
                     
                     obj.find('#searchTask').on('click', function(){
@@ -116,14 +116,14 @@
                         {field:'opt', width:'15%', title: '操作', templet: function(d){
                                 const html = []
                                 if (d.inferenceStatus == 0) {
-                                    html.push(`<button type="button" class="layui-btn layui-btn-xs">编辑</button>`)
+                                    html.push(`<button type="button" class="layui-btn layui-btn-xs" data-task-edit="${d.id}">编辑</button>`)
                                 } else {
-                                    html.push(`<button type="button" class="layui-btn layui-btn-xs">查看</button>`)
+                                    html.push(`<button type="button" class="layui-btn layui-btn-xs" data-task-look="${d.id}">查看</button>`)
                                 }
                                 if (d.inferenceStatus == 2 && d.executeTextSimilarity == 1 && d.executeAudioSimilarity == 1) {
-                                    html.push(`<button type="button" class="layui-btn layui-btn-xs">结果评测</button>`)
+                                    html.push(`<button type="button" class="layui-btn layui-btn-xs" data-task-go-to-result="${d.id}">结果评测</button>`)
                                 } else {
-                                    html.push(`<button type="button" class="layui-btn layui-btn-xs">开始执行</button>`)
+                                    html.push(`<button type="button" class="layui-btn layui-btn-xs" data-task-start-inference="${d.id}">开始执行</button>`)
                                 }
                                 return html.join(' ');
                             }},//查看详情，执行推理
@@ -137,18 +137,38 @@
                 });
             }
 
-            openCreateInferenceTask(){
+            openEditInferenceTask(taskId){
+                
+                const _this = this
+                const C_TaskDetail$1 = TaskDetailSpace.getTaskDetail('createInferenceTaskView', taskId)
+                
                 layer.open({
                     type: 1,
                     area: ['95%', '95%'],
                     content: `<div id="createInferenceTaskView"></div>`,
                     btn: ['确定', '取消'],
                     yes: function(){
-                        
+                        const task = C_TaskDetail$1.getTask()
+                        $.customAjax({
+                            url: BaseUrl+'task/save_inference_task',
+                            type: 'post',
+                            data: task,
+                            success: function(res){
+                                if (res.code == 0) {
+                                   layui.layer.msg('保存成功')
+                                    refreshListData('inferenceTaskList')
+                                } else {
+                                    layui.layer.msg(res.msg)
+                                }
+                            },
+                            error: function(res, msg){
+                                layui.layer.msg(msg)
+                            }
+                        })
                     }
                 });
 
-                const C_TaskDetail$1 = TaskDetailSpace.getTaskDetail('createInferenceTaskView', 0)
+                
                 C_TaskDetail$1.loadData()
             }
             

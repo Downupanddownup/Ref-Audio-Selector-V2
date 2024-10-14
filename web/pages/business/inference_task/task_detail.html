@@ -10,15 +10,38 @@
         this.vitsModels = []
         this.audioCategoryList = []
       }
+
+      getTask(){
+        return this.task
+      }
       
       loadData(){
         const _this = this
-        if (_this.taskId && _this.taskId > 0) {
-          
-        } else {
-          _this.task = new C_ObjInferenceTask({})
-          _this.render()
-        }
+
+        $.customAjax({
+          url: BaseUrl+'task/load_inference_task_detail',
+          type: 'post',
+          success: function(res){
+            if (res.code == 0) {
+              if (_this.taskId > 0) {
+                _this.task = new C_ObjInferenceTask(res.data.task)
+              } else {
+                _this.task = new C_ObjInferenceTask({})
+              }
+              _this.audioCategoryList = res.data.categoryList ? res.data.categoryList.map(item=>new C_ObjInferenceCategory(item)) : []
+              _this.gptModels = res.data.gptModels ? res.data.gptModels.map(item=>new C_GptModel(item)) : []
+              _this.vitsModels = res.data.vitsModels ? res.data.vitsModels.map(item=>new C_VitsModel(item)) : []
+              
+              _this.render()
+            } else {
+              layui.layer.msg(res.msg)
+            }
+          },
+          error: function(res, msg){
+            layui.layer.msg(msg)
+          }
+        })
+        
       }
       
       render() {
@@ -165,33 +188,78 @@
 
       openAudioSelectDialog(){
         const _this = this
-        layer.open({
+
+        const C_ReferenceSelect$1 = ReferenceSelectSpace.getReferenceSelect('audioSelectView',_this.task.taskAudioList.map(data=>{
+          return {
+            id:data.audioId, // id
+            audioName:data.audioName, // 音频名称
+            audioPath:data.audioPath, // 音频路径
+            content:data.audioContent, // 音频内容
+            language:data.audioLanguage, // 音频语种
+            category:data.audioCategory, // 音频分类
+            audioLength:data.audioLength, // 音频时长
+          }
+        }))
+        
+        const dialogId = layer.open({
           type: 1,
           area: ['90%', '90%'],
           content: `<div id="audioSelectView"></div>`,
           btn: ['确定', '取消'],
           yes: function(){
-
+            const selectedTextList = C_ReferenceSelect$1.getAllSelectedAudioList()
+            _this.task.taskTextList = selectedTextList.map(data => {
+              return new C_ObjInferenceTaskAudio({
+                audioId:data.id, // id
+                audioName:data.audioName, // 音频名称
+                audioPath:data.audioPath, // 音频路径
+                content:data.audioContent, // 音频内容
+                language:data.audioLanguage, // 音频语种
+                category:data.audioCategory, // 音频分类
+                audioLength:data.audioLength, // 音频时长
+              })
+            })
+            layui.layer.close(dialogId)
+            _this.render()
           }
         });
 
-        const C_ReferenceSelect$1 = ReferenceSelectSpace.getReferenceSelect('audioSelectView')
+        
         C_ReferenceSelect$1.render()
       }
 
       openTextManagerDialog(){
         const _this = this
-        layer.open({
+
+        const C_TextManager$1 = TextManagerSpace.getTextManager('textManagerView', _this.task.taskTextList.map(data=>{
+          return {
+            id: data.textId, // 自增编号
+            category: data.category, // 文本分类
+            textContent: data.textContent, // 推理文本
+            textLanguage: data.textLanguage // 文本语种
+          }
+        }))
+        
+        const dialogId = layer.open({
           type: 1,
           area: ['90%', '90%'],
           content: `<div id="textManagerView"></div>`,
           btn: ['确定', '取消'],
           yes: function(){
-
+            const selectedTextList = C_TextManager$1.getAllSelectedTextList()
+            _this.task.taskTextList = selectedTextList.map(data => {
+              return new C_ObjInferenceTaskText({
+                textId: data.id,
+                category: data.category,
+                textContent: data.textContent,
+                textLanguage: data.textLanguage
+              })
+            })
+            layui.layer.close(dialogId)
+            _this.render()
           }
         });
-
-        const C_TextManager$1 = TextManagerSpace.getTextManager('textManagerView')
+       
         C_TextManager$1.render()
       }
 

@@ -54,6 +54,8 @@ class C_ObjInferenceTaskAudio {//推理任务中，相关参考音频
         this.audioPath = data.audioPath || ''; // 音频路径
         this.audioContent = data.audioContent || ''; // 音频内容
         this.audioLanguage = data.audioLanguage || ''; // 音频语种
+        this.audioCategory = data.audioCategory || ''; // 音频分类
+        this.audioLength = data.audioLength || 0; // 音频时长
         this.createTime = data.createTime ? new Date(data.createTime) : null; // 创建时间, 默认为当前时间
     }
 }

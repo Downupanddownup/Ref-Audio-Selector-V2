@@ -2,10 +2,14 @@
 <script>
   const TextManagerSpace = (function () {
     class C_TextManager {
-      constructor(viewId) {
+      constructor(viewId, selectedTextList) {
         this.viewId = viewId
         this.textList = []
-        this.selectedTextList = []
+        this.selectedTextList = selectedTextList ? selectedTextList.map(i => new C_ObjInferenceText(i)) : []
+      }
+      
+      getAllSelectedTextList(){
+        return this.selectedTextList
       }
 
       render() {
@@ -202,8 +206,6 @@
       
       showEditTextDialog(textId){
         
-       
-        
         const _this = this
 
         let obj_text = null
@@ -337,8 +339,8 @@
 
     }
 
-    function getTextManager(viewId) {
-      return new C_TextManager(viewId)
+    function getTextManager(viewId, selectedTextList) {
+      return new C_TextManager(viewId, selectedTextList)
     }
 
     return {

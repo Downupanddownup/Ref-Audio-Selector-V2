@@ -72,6 +72,7 @@ async def get_inference_task_list(request: Request):
 
 def get_inference_task_from_json(form_data: dict) -> ObjInferenceTask:
     task = ObjInferenceTask(
+        id=form_data.get('id'),
         task_name=form_data.get('taskName'),
         compare_type=form_data.get('compareType'),
         gpt_sovits_version=form_data.get('gptSovitsVersion'),
@@ -128,26 +129,20 @@ def get_inference_task_from_json(form_data: dict) -> ObjInferenceTask:
     return task
 
 
-@router.post("/insert_inference_task")
-async def insert_inference_task(request: Request):
-    form_data = await request.json()
-
-    task = get_inference_task_from_json(form_data)
-
-    task_id = InferenceTaskService.add_inference_task(task)
-
-    return ResponseResult(data={"task_id": task_id})
-
-
 @router.post("/save_inference_task")
 async def save_inference_task(request: Request):
     form_data = await request.json()
 
     task = get_inference_task_from_json(form_data)
+    task_id = 0
+    if task.id > 0:
+        result = InferenceTaskService.save_inference_task(task)
+        if result:
+            task_id = task.id
+    else:
+        task_id = InferenceTaskService.add_inference_task(task)
 
-    result = InferenceTaskService.save_inference_task(task)
-
-    return ResponseResult(data={"result": result})
+    return ResponseResult(data={"task_id": task_id})
 
 
 @router.post("/load_inference_task_detail")
@@ -164,9 +159,9 @@ async def load_inference_task_detail(request: Request):
 
     return ResponseResult(data={
         "task": task,
-        "category_list": category_list,
-        "gpt_model_list": gpt_model_list,
-        "vits_model_list": vits_model_list
+        "categoryList": category_list,
+        "gptModels": gpt_model_list,
+        "vitsModels": vits_model_list
     })
 
 

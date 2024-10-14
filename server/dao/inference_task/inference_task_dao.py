@@ -105,7 +105,7 @@ class InferenceTaskDao:
     @staticmethod
     def batch_insert_task_audio(audio_list: list[ObjInferenceTaskAudio]) -> int:
         sql = '''
-        INSERT INTO tab_obj_inference_task_audio(TaskId,AudioId,AudioName,AudioPath,AudioContent,AudioLanguage,CreateTime) VALUES (?,?,?,?,?,?,datetime('now'))
+        INSERT INTO tab_obj_inference_task_audio(TaskId,AudioId,AudioName,AudioPath,AudioContent,AudioLanguage,AudioCategory,AudioLength,CreateTime) VALUES (?,?,?,?,?,?,?,?,datetime('now'))
         '''
         return DBSlaveSQLExecutor.batch_execute(sql, [(
             x.task_id,
@@ -113,7 +113,9 @@ class InferenceTaskDao:
             x.audio_name,
             x.audio_path,
             x.audio_content,
-            x.audio_language
+            x.audio_language,
+            x.audio_category,
+            x.audio_length,
         ) for x in audio_list])
 
     @staticmethod
@@ -174,6 +176,8 @@ class InferenceTaskDao:
                 audio_path=data.get('AudioPath'),
                 audio_content=data.get('AudioContent'),
                 audio_language=data.get('AudioLanguage'),
+                audio_category=data.get('AudioCategory'),
+                audio_length=data.get('AudioLength'),
                 create_time=data.get('CreateTime')
             ))
         return record_list

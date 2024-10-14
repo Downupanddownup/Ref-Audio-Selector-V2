@@ -100,6 +100,8 @@ def init_slave_table(db_path):
         AudioPath TEXT COMMENT '音频路径',
         AudioContent TEXT COMMENT '音频内容',
         AudioLanguage TEXT COMMENT '音频语种',
+        AudioCategory TEXT COMMENT '音频分类',
+        AudioLength REAL COMMENT '音频时长',
         CreateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- SQLite中默认值可以直接设置
     );
     ''')
