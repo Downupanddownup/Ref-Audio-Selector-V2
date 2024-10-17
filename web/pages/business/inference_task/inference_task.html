@@ -45,6 +45,7 @@
             }
 
             loadInferenceTaskList(){
+                const _this = this
                 const height = $('#inferenceTaskList').parent().parent().height() - 50
                 // 创建渲染实例
                 layui.table.render({
@@ -129,26 +130,23 @@
                             }},//查看详情，执行推理
                     ]],
                     done: function(){
-                        const _this = this
                         const obj = $('#' + _this.viewId)
                         
-                        obj.on('click', 'button[data-task-edit]', function(){
+                        obj.find('button[data-task-edit]').on('click', function () {
                             const taskId = $(this).attr('data-task-edit')
                             _this.openEditInferenceTask(taskId)
                         })
                         
-                        obj.on('click', 'button[data-task-look]', function(){
+                        obj.find('button[data-task-look]').on('click', function () {
                             const taskId = $(this).attr('data-task-look')
                             _this.lookInferenceTaskDetail(taskId)
                         })
                         
-                        obj.on('click', 'button[data-task-start-inference]', function(){
+                        obj.find('button[data-task-start-inference]').on('click', function () {
                             const taskId = $(this).attr('data-task-start-inference')
                             _this.startInferenceTask(taskId)
                         })
                         
-                        
-
                     },
                     error: function(res, msg){
                         console.log(res, msg)
