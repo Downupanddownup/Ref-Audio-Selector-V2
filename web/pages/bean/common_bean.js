@@ -148,5 +148,12 @@ class C_VitsModel {
     }
 }
 
-
+class C_ResultEvaluationFilter {
+    constructor() {
+        this.taskId = 0;//推理任务id
+        this.textIds = [];//推理文本id
+        this.audioIds = [];//参考音频id
+        this.compareParamIds = [];//比对参数id
+    }
+}
 

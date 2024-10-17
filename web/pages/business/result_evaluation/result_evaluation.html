@@ -10,7 +10,8 @@
                 const getTpl = $('#resultEvaluationTemplate').html();
                 // 渲染并输出结果
                 layui.laytpl(getTpl).render({}, function(html){
-                    $('#'+_this.viewId).html(html)
+                    const obj = $('#'+_this.viewId)
+                    obj.html(html)
                 });
             }
         }
@@ -25,5 +26,108 @@
     })()
 </script>
 <script id="resultEvaluationTemplate" type="text/html">
-    推理结果评测
+    <table>
+        <tr>
+            <td>选择任务：</td>
+            <td>
+                <select class="customSelect" id="selectedTask">
+                    <option value="-1">请选择</option>
+                    <option value="0">待推理</option>
+                    <option value="1">部分推理</option>
+                    <option value="2">已完成</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>选择对比参数：</td>
+            <td>
+                <select class="customSelect">
+                    <option value="-1">请选择</option>
+                    <option value="0">待推理</option>
+                    <option value="1">部分推理</option>
+                    <option value="2">已完成</option>
+                </select>
+            </td>
+            <td>选择参考音频：</td>
+            <td>
+                <select class="customSelect">
+                    <option value="-1">请选择</option>
+                    <option value="0">待推理</option>
+                    <option value="1">部分推理</option>
+                    <option value="2">已完成</option>
+                </select>
+            </td>
+            <td>选择推理文本：</td>
+            <td>
+                <select class="customSelect">
+                    <option value="-1">请选择</option>
+                    <option value="0">待推理</option>
+                    <option value="1">部分推理</option>
+                    <option value="2">已完成</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>选择时长范围：</td>
+            <td>
+                <input type="number" autocomplete="off" placeholder="开始" class="layui-input" style="width: auto;" >-
+                <input type="number" autocomplete="off" placeholder="结束" class="layui-input" style="width: auto;" >
+            </td>
+            <td>选择文本相似度范围：</td>
+            <td>
+                <input type="number" autocomplete="off" placeholder="开始" class="layui-input" style="width: auto;" >-
+                <input type="number" autocomplete="off" placeholder="结束" class="layui-input" style="width: auto;" >
+            </td>
+            <td>选择音频相似度范围：</td>
+            <td>
+                <input type="number" autocomplete="off" placeholder="开始" class="layui-input" style="width: auto;" >-
+                <input type="number" autocomplete="off" placeholder="结束" class="layui-input" style="width: auto;" >
+            </td>
+        </tr>
+        <tr>
+            <td>选择评分范围：</td>
+            <td>
+                <input type="number" autocomplete="off" placeholder="开始" class="layui-input" style="width: auto;" >-
+                <input type="number" autocomplete="off" placeholder="结束" class="layui-input" style="width: auto;" >
+            </td>
+            <td>备注：</td>
+            <td>
+                <input type="number" autocomplete="off" placeholder="开始" class="layui-input" style="width: auto;" >
+            </td>
+        </tr>
+        <tr>
+            <td>选择音频展示的包含顺序：</td>
+            <td>
+                <select class="customSelect">
+                    <option value="-1">请选择</option>
+                    <option value="0">待推理</option>
+                    <option value="1">部分推理</option>
+                    <option value="2">已完成</option>
+                </select>
+            </td>
+            <td>选择音频排序字段：</td>
+            <td>
+                <select class="customSelect">
+                    <option value="-1">时长</option>
+                    <option value="0">待推理</option>
+                    <option value="1">部分推理</option>
+                    <option value="2">已完成</option>
+                </select>
+            </td>
+            <td>选择音频升降序：</td>
+            <td>
+                <select class="customSelect">
+                    <option value="-1">时长</option>
+                    <option value="0">待推理</option>
+                    <option value="1">部分推理</option>
+                    <option value="2">已完成</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type="submit" class="layui-btn layui-btn-lg">查询推理结果</button>
+            </td>
+        </tr>
+    </table>
 </script>

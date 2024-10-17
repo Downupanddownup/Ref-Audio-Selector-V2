@@ -57,7 +57,7 @@
                     cols: [[
                         {field:'index', width:'5%', title: '序号', type: 'numbers'},
                         {field:'taskName', width:'10%', title: '任务名称', templet: function(d){
-                                return d.audioName;
+                                return d.taskName;
                             }},
                         {field:'compareType', width:'10%', title: '任务变量', templet: function(d){
                                 if (d.compareType === 'refer_audio') {
@@ -182,7 +182,7 @@
                 
                 const dialogIndex = layer.open({
                     type: 1,
-                    area: ['95%', '95%'],
+                    area: ['60%', '60%'],
                     content: `<div id="createInferenceTaskView"></div>`,
                     btn: ['确定', '取消'],
                     yes: function(){
@@ -190,7 +190,7 @@
                         $.customAjax({
                             url: BaseUrl+'task/save_inference_task',
                             type: 'post',
-                            data: task,
+                            data: JSON.stringify(task),
                             success: function(res){
                                 if (res.code == 0) {
                                    layui.layer.msg('保存成功')

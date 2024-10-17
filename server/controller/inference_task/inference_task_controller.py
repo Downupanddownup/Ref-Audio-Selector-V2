@@ -10,11 +10,12 @@ from server.bean.inference_task.obj_inference_text import ObjInferenceTextFilter
 from server.common.custom_exception import CustomException
 from server.common.log_config import logger
 from server.common.response_result import ResponseResult
+from server.dao.data_base_manager import db_config
 from server.service.inference_task.inference_task_service import InferenceTaskService
 from server.service.inference_task.inference_text_service import InferenceTextService
 from server.service.inference_task.model_manager_service import ModelManagerService
 from server.service.reference_audio.reference_category_service import ReferenceCategoryService
-from server.util.util import str_to_int
+from server.util.util import str_to_int, open_file
 
 router = APIRouter(prefix="/task")
 
@@ -147,8 +148,8 @@ async def save_inference_task(request: Request):
 
 @router.post("/load_inference_task_detail")
 async def load_inference_task_detail(request: Request):
-    form_data = await request.json()
-    task_id = str_to_int(form_data.get('task_id')),
+    form_data = await request.form()
+    task_id = str_to_int(form_data.get('task_id'))
     task = None
     if task_id > 0:
         task = InferenceTaskService.find_whole_inference_task_by_id(task_id)
@@ -165,10 +166,22 @@ async def load_inference_task_detail(request: Request):
     })
 
 
+@router.post("/load_model_list")
+async def load_model_list(request: Request):
+
+    gpt_model_list = ModelManagerService.get_gpt_model_list()
+    vits_model_list = ModelManagerService.get_vits_model_list()
+
+    return ResponseResult(data={
+        "gptModels": gpt_model_list,
+        "vitsModels": vits_model_list
+    })
+
+
 @router.post("/start_execute_inference_task")
 async def start_execute_inference_task(request: Request):
-    form_data = await request.json()
-    task_id = str_to_int(form_data.get('task_id')),
+    form_data = await request.form()
+    task_id = str_to_int(form_data.get('task_id'))
     if task_id < 0:
         raise CustomException("task_id is invalid")
     task = InferenceTaskService.find_whole_inference_task_by_id(task_id)
@@ -187,3 +200,9 @@ async def start_execute_inference_task(request: Request):
     logger.info(log_message)
 
     return ResponseResult(data={"result": len(result_audio_list)})
+
+
+@router.post("/open_model_file")
+async def open_model_file(request: Request):
+    open_file(filepath=db_config.get_model_dir())
+    return ResponseResult()

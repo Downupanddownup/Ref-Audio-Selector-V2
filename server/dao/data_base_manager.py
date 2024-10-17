@@ -35,6 +35,12 @@ class DatabaseConfig(metaclass=SingletonMeta):
             os.makedirs(work_dir)
         return work_dir
 
+    def get_model_dir(self) -> str:
+        model_dir = f'{self.workspace}\\{self.role_name}\\model'
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+        return model_dir
+
     def get_master_db_path(self) -> str:
         return self.db_master_path
 

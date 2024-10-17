@@ -17,6 +17,7 @@ class ResponseResult:
         self.code = code
         self.msg = msg
         self.count = count
+        self.data = None
         if isinstance(data, list):
             self.data = convert_list_to_camel_case_dicts(data if data is not None else [])
         else:
@@ -25,6 +26,14 @@ class ResponseResult:
                     self.data = data.to_camel_case_dict()
                 else:
                     self.data = data
+
+    def to_dict(self):
+        return {
+            "code": self.code,
+            "msg": self.msg,
+            "count": self.count,
+            "data": self.data
+        }
 
     def __str__(self):
         return f"ResponseResult(code={self.code}, msg='{self.msg}', count={self.count}, data={self.data})"

@@ -5,6 +5,7 @@ import webbrowser
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 
 from server.common.custom_exception import CustomException
@@ -31,14 +32,16 @@ app.add_middleware(
 # 自定义异常处理器
 @app.exception_handler(CustomException)
 async def custom_exception_handler(request: Request, exc: CustomException):
-    return ResponseResult(code=1, msg=exc.message)
+    result = ResponseResult(code=1, msg=exc.message)
+    return JSONResponse(content=result.to_dict(), status_code=200)
 
 
 # 注册默认的异常处理器
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request, exc):
+@app.exception_handler(Exception)
+async def validation_exception_handler(request, exc: Exception):
     logger.error(exc)
-    return ResponseResult(code=2, msg=exc.message)
+    result = ResponseResult(code=1, msg=str(exc))
+    return JSONResponse(content=result.to_dict(), status_code=500)
 
 
 # 注册路由

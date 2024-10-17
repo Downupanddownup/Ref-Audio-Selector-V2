@@ -21,6 +21,9 @@
         $.customAjax({
           url: BaseUrl+'task/load_inference_task_detail',
           type: 'post',
+          data:{
+            task_id: _this.taskId
+          },
           success: function(res){
             if (res.code == 0) {
               if (_this.taskId > 0) {
@@ -84,7 +87,7 @@
           
           obj.find('button[data-add]').on('click', function(){
             const index = $(this).data('add')
-            _this.task.compareParams.splice(index, 0, new C_ObjInferenceTaskCompareParams({}))
+            _this.task.compareParams.splice(index+1, 0, new C_ObjInferenceTaskCompareParams({}))
             _this.render()
           })
           
@@ -141,6 +144,7 @@
           
           obj.find('#gsvVersion').on('change', function() {
             _this.task.gptSovitsVersion = $(this).val()
+            _this.render()
           })
           
           obj.find('#gptModel').on('change', function() {
@@ -183,7 +187,51 @@
             _this.openTextManagerDialog()
           })
           
+          obj.find('#modelManager').on('click', function() {
+            _this.openModelFile()
+          })
+          
+          obj.find('button[data-refresh-model]').on('click', function() {
+            _this.reloadModelList()
+          })
+          
         });
+      }
+
+      reloadModelList(){
+        const _this = this
+        $.customAjax({
+          url: BaseUrl+'task/load_model_list',
+          type: 'post',
+          success: function(res){
+            if (res.code == 0) {
+              _this.gptModels = res.data.gptModels ? res.data.gptModels.map(item=>new C_GptModel(item)) : []
+              _this.vitsModels = res.data.vitsModels ? res.data.vitsModels.map(item=>new C_VitsModel(item)) : []
+              _this.render()
+            } else {
+              layui.layer.msg(res.msg)
+            }
+          },
+          error: function(res, msg){
+            layui.layer.msg(msg)
+          }
+        })
+      }
+
+      openModelFile(){
+        $.customAjax({
+          url: BaseUrl+'task/open_model_file',
+          type: 'post',
+          success: function(res){
+            if (res.code == 0) {
+            } else {
+              layer.msg(res.msg)
+            }
+          },
+          error: function(res, msg){
+            layer.msg(msg)
+          }
+        })
       }
 
       openAudioSelectDialog(){
@@ -495,7 +543,7 @@
               <option {{isTrue(d.task.gptSovitsVersion=="v1",'selected','')}} value="v1">v1</option>
               <option {{isTrue(d.task.gptSovitsVersion=="v2",'selected','')}} value="v2">v2</option>
             </select>
-            <button type="button" class="layui-btn layui-btn-sm">模型管理</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="modelManager">模型管理</button>
           </td>
           <td>
             GPT 模型：
@@ -513,7 +561,7 @@
                     {{# } }}
                   {{# }) }}
                 </select>
-                <button type="button" class="layui-btn layui-btn-sm">刷新</button>  
+                <button type="button" class="layui-btn layui-btn-sm" data-refresh-model >刷新</button>  
             
             {{# } }}
             
@@ -535,7 +583,7 @@
                   {{# } }}
                 {{# }) }}
               </select>
-              <button type="button" class="layui-btn layui-btn-sm">刷新</button>
+              <button type="button" class="layui-btn layui-btn-sm" data-refresh-model >刷新</button>
 
             {{# } }}
             

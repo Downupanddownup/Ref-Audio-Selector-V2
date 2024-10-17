@@ -2,7 +2,7 @@ from server.bean.inference_task.obj_inference_task import ObjInferenceTaskFilter
 from server.bean.inference_task.obj_inference_task_audio import ObjInferenceTaskAudio
 from server.bean.inference_task.obj_inference_task_compare_params import ObjInferenceTaskCompareParams
 from server.bean.inference_task.obj_inference_task_text import ObjInferenceTaskText
-from server.dao.data_base_manager import DBSlaveSQLExecutor, DBMasterSQLExecutor
+from server.dao.data_base_manager import DBSlaveSQLExecutor
 
 
 class InferenceTaskDao:
@@ -66,7 +66,7 @@ class InferenceTaskDao:
         sql = '''
             INSERT INTO tab_obj_inference_task(TaskName,CompareType,GptSovitsVersion,GptModelName,VitsModelName,TopK,TopP,Temperature,TextDelimiter,Speed,OtherParameters,InferenceStatus,ExecuteTextSimilarity,ExecuteAudioSimilarity,CreateTime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'))
             '''
-        return DBMasterSQLExecutor.insert(sql, (
+        return DBSlaveSQLExecutor.insert(sql, (
             task.task_name,
             task.compare_type,
             task.gpt_sovits_version,
@@ -220,7 +220,7 @@ class InferenceTaskDao:
             OtherParameters=?
              WHERE Id = ? 
             '''
-        return DBMasterSQLExecutor.execute_update(sql, (
+        return DBSlaveSQLExecutor.execute_update(sql, (
             task.task_name,
             task.compare_type,
             task.gpt_sovits_version,
@@ -240,7 +240,7 @@ class InferenceTaskDao:
         sql = '''
             DELETE FROM tab_obj_inference_task_compare_params WHERE TaskId = ?
             '''
-        return DBMasterSQLExecutor.execute_update(sql, (
+        return DBSlaveSQLExecutor.execute_update(sql, (
             task_id,
         ))
 
@@ -249,7 +249,7 @@ class InferenceTaskDao:
         sql = '''
             DELETE FROM tab_obj_inference_task_audio WHERE TaskId = ?
             '''
-        return DBMasterSQLExecutor.execute_update(sql, (
+        return DBSlaveSQLExecutor.execute_update(sql, (
             task_id,
         ))
 
@@ -258,7 +258,7 @@ class InferenceTaskDao:
         sql = '''
             DELETE FROM tab_obj_inference_task_text WHERE TaskId = ?
             '''
-        return DBMasterSQLExecutor.execute_update(sql, (
+        return DBSlaveSQLExecutor.execute_update(sql, (
             task_id,
         ))
 
@@ -267,7 +267,7 @@ class InferenceTaskDao:
         sql = '''
             UPDATE tab_obj_inference_task SET InferenceStatus = ? WHERE TaskId = ?
             '''
-        return DBMasterSQLExecutor.execute_update(sql, (
+        return DBSlaveSQLExecutor.execute_update(sql, (
             inference_status,
             task_id
         ))
